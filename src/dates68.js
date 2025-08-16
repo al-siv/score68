@@ -29,3 +29,24 @@ export function listDatesWithSum(target = TARGET_SUM, start = START_DATE, end = 
   }
   return result;
 }
+
+// --- New helpers (pure) ---
+export function formatDateDM(date) {
+  return `${String(date.getUTCDate()).padStart(2,'0')}.${String(date.getUTCMonth()+1).padStart(2,'0')}`;
+}
+
+export function formatDateFull(date) {
+  return `${formatDateDM(date)}.${date.getUTCFullYear()}`;
+}
+
+export function groupDatesByYear(dates) {
+  return dates.reduce((acc, d) => {
+    const y = d.getUTCFullYear();
+    (acc[y] ||= []).push(d);
+    return acc;
+  }, {});
+}
+
+export function formatHeader({ target = TARGET_SUM, start = START_DATE, end = END_DATE } = {}) {
+  return `Numerology date listing (sum = ${target}) using rule D + M + YY(first pair) + YY(second pair). Range: ${formatDateFull(start)}–${formatDateFull(end)}.`;
+}

@@ -49,3 +49,21 @@ Scope: Extract pure module, add tests, license, and README programmatic usage.
 - [x] Commit & push branch A01 (379cc4d)
 - [x] Open PR #1
 - [x] Merge PR #1 into main (fast-forward to 0be4f5e) and delete branch
+
+---
+
+Assignment A02: Range extension & helper refactor
+Scope: Extend start date to 01.01.2022, eliminate hardcoded header literals, extract grouping/formatting helpers into pure module, update tests and sprint docs.
+
+### Checklist A02
+- [x] Create branch `sprint-0.1.0-A02-2025-08-16`
+- [x] Update START_DATE to 2022-01-01 in `src/dates68.js`
+- [x] Adjust CLI header to use constants (dynamic range + target) instead of hardcoded text
+- [x] Add helper functions `groupDatesByYear`, `formatDateDM`, `formatDateFull`, `formatHeader` (pure, exported)
+- [x] Refactor `cli.js` to thin shell (F3) using helpers
+- [x] Update tests to cover helpers & new constant range
+- [x] Correct expected year counts to uniform 12 per year (2022–2026)
+- [x] Run tests (green)
+- [ ] Update README sample to reflect inclusive January 25 date and clarify 12-per-year pattern (pending)
+- [ ] Commit & push final A02 changes and open PR
+- [ ] Merge PR after review (DoD: docs updated, tests green)

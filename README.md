@@ -13,10 +13,11 @@ Example: 24.02.2022 → 24 + 2 + 20 + 22 = 68.
 npm run dates:68
 ```
 
-Sample output (truncated):
+Sample output (first year shown):
 ```
-2022: 25.01 24.02 23.03 22.04 ...
+2022: 25.01 24.02 23.03 22.04 21.05 20.06 19.07 18.08 17.09 16.10 15.11 14.12
 ```
+Each year in the range has exactly 12 such dates.
 
 ## Programmatic Usage
 ```js

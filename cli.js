@@ -1,17 +1,12 @@
-/** CLI entry for score68 (replaces scripts/dates68.js) */
-import { listDatesWithSum, TARGET_SUM, START_DATE, END_DATE } from './src/dates68.js';
+#!/usr/bin/env node
+import { listDatesWithSum, TARGET_SUM, START_DATE, END_DATE, groupDatesByYear, formatDateDM, formatHeader } from './src/dates68.js';
 
-function groupBy(xs, keyFn) { return xs.reduce((m, x) => { const k = keyFn(x); (m[k] ||= []).push(x); return m; }, {}); }
+const dates = listDatesWithSum();
+const grouped = groupDatesByYear(dates);
 
-function fmt(date) { return `${String(date.getUTCDate()).padStart(2,'0')}.${String(date.getUTCMonth()+1).padStart(2,'0')}.${date.getUTCFullYear()}`; }
-
-const matching = listDatesWithSum(TARGET_SUM, START_DATE, END_DATE);
-const byYear = groupBy(matching, d => d.getUTCFullYear());
-
-console.log(`Numerology date listing (sum = ${TARGET_SUM}) using rule D + M + YY(first pair) + YY(second pair). Range: ${fmt(START_DATE)}–${fmt(END_DATE)}.\n`);
-Object.keys(byYear).sort().forEach(year => {
-  const parts = byYear[year]
-    .sort((a,b)=>a-b)
-    .map(d => `${String(d.getUTCDate()).padStart(2,'0')}.${String(d.getUTCMonth()+1).padStart(2,'0')}`);
-  console.log(`${year}: ${parts.join(' ')}`);
-});
+console.log(formatHeader({ target: TARGET_SUM, start: START_DATE, end: END_DATE }));
+console.log();
+for (const year of Object.keys(grouped).sort()) {
+  const line = grouped[year].map(d => formatDateDM(d)).join(' ');
+  console.log(`${year}: ${line}`);
+}
