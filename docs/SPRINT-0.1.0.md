@@ -46,5 +46,6 @@ Scope: Extract pure module, add tests, license, and README programmatic usage.
 - [x] Add LICENSE (CC0)
 - [x] Update README with programmatic usage & test docs
 - [x] Run tests locally (green)
-- [ ] Commit & push branch A01
-- [ ] Open PR (pending)
+- [x] Commit & push branch A01 (379cc4d)
+- [x] Open PR #1
+- [x] Merge PR #1 into main (fast-forward to 0be4f5e) and delete branch
