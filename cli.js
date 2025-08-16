@@ -1,6 +1,5 @@
-#!/usr/bin/env node
-/** CLI entry for score68 */
-import { listDatesWithSum, TARGET_SUM, START_DATE, END_DATE } from '../src/dates68.js';
+/** CLI entry for score68 (replaces scripts/dates68.js) */
+import { listDatesWithSum, TARGET_SUM, START_DATE, END_DATE } from './src/dates68.js';
 
 function groupBy(xs, keyFn) { return xs.reduce((m, x) => { const k = keyFn(x); (m[k] ||= []).push(x); return m; }, {}); }
 
