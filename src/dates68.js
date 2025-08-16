@@ -1,6 +1,6 @@
 // Pure module providing listing functionality.
 export const TARGET_SUM = 68;
-export const START_DATE = new Date(Date.UTC(2022, 1, 24));
+export const START_DATE = new Date(Date.UTC(2022, 0, 1)); // changed from Feb 24 2022 to Jan 1 2022
 export const END_DATE = new Date(Date.UTC(2026, 11, 31));
 
 export function numerologySum(date) {

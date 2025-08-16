@@ -1,6 +1,6 @@
 # score68
 
-Utility that enumerates all calendar dates between 24 Feb 2022 and 31 Dec 2026 whose numerological sum
+Utility that enumerates all calendar dates between 1 Jan 2022 and 31 Dec 2026 whose numerological sum
 
 ```
 Day + Month + (first two digits of year) + (last two digits of year) = 68
@@ -15,7 +15,7 @@ npm run dates:68
 
 Sample output (truncated):
 ```
-2022: 24.02 23.03 22.04 ...
+2022: 25.01 24.02 23.03 22.04 ...
 ```
 
 ## Programmatic Usage

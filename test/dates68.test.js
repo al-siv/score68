@@ -13,6 +13,6 @@ for (const d of dates) {
 
 // Count per year expectations (derived earlier)
 const counts = dates.reduce((m,d)=>{const y=d.getUTCFullYear(); m[y]=(m[y]||0)+1; return m;},{});
-assert.deepEqual(counts, { 2022:11, 2023:12, 2024:12, 2025:12, 2026:12 });
+assert.deepEqual(counts, { 2022:12, 2023:12, 2024:12, 2025:12, 2026:12 });
 
 console.log('All tests passed.');
