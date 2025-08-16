@@ -66,4 +66,4 @@ Scope: Extend start date to 01.01.2022, eliminate hardcoded header literals, ext
 - [x] Run tests (green)
 - [x] Update README sample to reflect inclusive January 25 date and clarify 12-per-year pattern
 - [x] Commit & push final A02 changes (39caa83) – PR opening skipped (direct merge path)
-- [ ] Merge branch into main (pending)
+ - [x] Merge branch into main via --no-ff (merge commit 771dae6)
