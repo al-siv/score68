@@ -64,6 +64,6 @@ Scope: Extend start date to 01.01.2022, eliminate hardcoded header literals, ext
 - [x] Update tests to cover helpers & new constant range
 - [x] Correct expected year counts to uniform 12 per year (2022–2026)
 - [x] Run tests (green)
-- [ ] Update README sample to reflect inclusive January 25 date and clarify 12-per-year pattern (pending)
-- [ ] Commit & push final A02 changes and open PR
-- [ ] Merge PR after review (DoD: docs updated, tests green)
+- [x] Update README sample to reflect inclusive January 25 date and clarify 12-per-year pattern
+- [x] Commit & push final A02 changes (39caa83) – PR opening skipped (direct merge path)
+- [ ] Merge branch into main (pending)
