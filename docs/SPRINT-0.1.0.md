@@ -21,9 +21,9 @@ Scope: Implement script to list all dates between 24.02.2022 and 31.12.2026 whos
 ### Polish
 - [x] Review formatting / purity (F1–F4) (no mutation beyond local loop var)
 ### Merge / Publish
-- [ ] Initialize git repo & initial commit
-- [ ] Create public GitHub repo & push (`al-siv/score68`)
-- [ ] Tag v0.1.0 and push tag
+- [x] Initialize git repo & initial commit
+- [x] Create public GitHub repo & push (`al-siv/score68`)
+- [x] Tag v0.1.0 and push tag
 
 ### Output (dates sum to 68)
 2022: 24.02 23.03 22.04 21.05 20.06 19.07 18.08 17.09 16.10 15.11 14.12
@@ -31,3 +31,20 @@ Scope: Implement script to list all dates between 24.02.2022 and 31.12.2026 whos
 2024: 23.01 22.02 21.03 20.04 19.05 18.06 17.07 16.08 15.09 14.10 13.11 12.12
 2025: 22.01 21.02 20.03 19.04 18.05 17.06 16.07 15.08 14.09 13.10 12.11 11.12
 2026: 21.01 20.02 19.03 18.04 17.05 16.06 15.07 14.08 13.09 12.10 11.11 10.12
+
+---
+
+Assignment A01: Modularization & Tests (feature + quality upgrade)
+Scope: Extract pure module, add tests, license, and README programmatic usage.
+
+### Checklist A01
+- [x] Create branch `sprint-0.1.0-A01-2025-08-16` (branch policy §5)
+- [x] Extract pure module `src/dates68.js` (F2)
+- [x] Refactor CLI to use module (thin shell F3)
+- [x] Add tests `test/dates68.test.js` (F11 property-ish example set)
+- [x] Add test script to `package.json`
+- [x] Add LICENSE (CC0)
+- [x] Update README with programmatic usage & test docs
+- [x] Run tests locally (green)
+- [ ] Commit & push branch A01
+- [ ] Open PR (pending)
