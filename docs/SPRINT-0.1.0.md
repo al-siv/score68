@@ -46,5 +46,6 @@ Scope: Extract pure module, add tests, license, and README programmatic usage.
 - [x] Add LICENSE (CC0)
 - [x] Update README with programmatic usage & test docs
 - [x] Run tests locally (green)
-- [ ] Commit & push branch A01
-- [ ] Open PR (pending)
+- [x] Commit & push branch A01
+- [x] Open PR (pending)
+- [x] Replace `scripts/dates68.js` with root `cli.js` (simplify structure) – removal recorded
