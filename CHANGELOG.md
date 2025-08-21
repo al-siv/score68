@@ -2,6 +2,11 @@
 
 All notable changes are documented here. Dates use YYYY-MM-DD.
 
+## [0.2.1] - 2025-08-21
+### Documentation
+- Added CONTRIBUTING.md with step-by-step PR author & maintainer workflows.
+- Added Contributing section in README.
+
 ## [0.2.0] - 2025-08-21
 ### Added
 - Pure argument parser (`src/args.js`) with error codes (UNKNOWN_FLAG, INVALID_TARGET, RANGE_FORMAT, RANGE_ORDER, YEARS_VALUE, CONFLICT_RANGE_YEARS).
