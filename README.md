@@ -122,6 +122,8 @@ listDatesWithSum(target = 68, startDate = START_DATE, endDate = END_DATE) -> Dat
 
 Node version: target modern LTS (>=18).
 
+Release process: see `docs/BUILD_RELEASE.md`.
+
 ## Changelog
 See `CHANGELOG.md` for version history.
 

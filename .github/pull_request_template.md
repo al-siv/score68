@@ -1,42 +1,42 @@
-Title: Sprint {SEMVER} M{N}: <concise scope>
+## PR Title
+Sprint {SEMVER} A{AA}: <short scope>
 
 ## Summary
-High-level what/why (no implementation minutiae). Reference sprint file `sprints/SPRINT-{SEMVER}.md` assignment & milestone IDs.
+2–4 line what/why.
 
 ## Scope
-Explicit milestones/phases covered (e.g. A11 M6 Verify, M7 Docs). Out-of-scope items explicitly listed.
+Assignment: A{AA}
+Milestones/Phases: (list)
+Out of Scope / Deferred: (list)
 
 ## Changes
-Terse per path bullets (no repetition of diff):
-- path/to/file.rs: short reason (<80 chars)
-- docs/CONFIG.md: updated migration / precedence section
-Include deletions (removed legacy XYZ) and structural moves.
+Terse bullets per path:
+- `cli.js`: ...
+- `src/args.js`: ...
 
 ## Verification
+Local: `npm run verify` PASS
+CI: (link)
+Key tests summary:
 ```
-cargo fmt --check   # PASS
-cargo clippy -- -D warnings  # PASS
-cargo test --tests -q  # PASS (N skipped: auth/vector when no creds)
+All tests passed (dates68, cli, args, property, env)
 ```
-Additional: grep checks, size report, any manual smoke notes.
-
-Size report (git diff --stat origin/main...HEAD): attach or paste summary counts.
 
 ## Risks
-Severity (Low|Med|High) + rationale. Mitigations or N/A.
+Severity: Low|Med|High; bullets with mitigation or None.
 
 ## Follow-ups
-List atomic tasks (A12 next steps, deferred hardening). Each line: owner(optional) – description.
+- 
 
 ## Autonomous Decisions
-≤5 bullets capturing key decisions (tooling, refactors, deferrals) with brief rationale.
+1. 
+2. 
 
 ## Checklist
-- [ ] Sprint version coupling correct (Cargo.toml vs sprint file)
-- [ ] Gates green (fmt, clippy, tests)
-- [ ] Docs updated & no stale references (grep verified)
-- [ ] No deny-list violations (see sprints/GUIDELINES §10)
-- [ ] Size report included
-- [ ] Follow-ups enumerated
+- [ ] Sprint file updated
+- [ ] CHANGELOG updated if version bump
+- [ ] Links valid
+- [ ] Scope limited (one assignment slice)
 
-<!-- Keep template minimal & machine-parsable. -->
+## References
+Links to related issues / prior PRs.
