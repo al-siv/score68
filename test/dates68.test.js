@@ -25,7 +25,8 @@ assert.match(formatDateFull(sample), /^\d{2}\.\d{2}\.2022$/);
 // Header formatting
 const header = formatHeader({ target: TARGET_SUM, start: START_DATE, end: END_DATE });
 assert(header.includes('sum = 68'));
-assert(header.includes('2022') && header.includes('2026'));
+// Range years were removed from header formatting; ensure rule wording present
+assert(header.includes('% 100'));
 
 console.log('All tests passed. Total dates:', dates.length);
 
