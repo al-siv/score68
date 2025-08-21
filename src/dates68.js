@@ -52,12 +52,11 @@ export function formatHeader({ target = TARGET_SUM, start = START_DATE, end = EN
   return `Numerology date listing (sum = ${target}) using rule (D + M + YY(first pair) + YY(second pair)) % 100. Range: ${formatDateFull(start)}–${formatDateFull(end)}.`;
 }
 
-// Banner formatting (two right-aligned columns: label & value)
+// Banner formatting (label right-aligned, value left-aligned)
 export function formatBanner(entries) {
   // entries: array of [label, value]
   const labelWidth = Math.max(...entries.map(([l]) => l.length));
-  const valueWidth = Math.max(...entries.map(([_, v]) => String(v).length));
   return entries
-    .map(([l, v]) => `${l.padStart(labelWidth)}  ${String(v).padStart(valueWidth)}`)
+    .map(([l, v]) => `${l.padStart(labelWidth)}  ${String(v)}`)
     .join('\n');
 }

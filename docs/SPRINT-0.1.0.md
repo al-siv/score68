@@ -75,23 +75,25 @@ Scope: (1) Add CLI help (-h/--help) with name/version/repository, (2) support cu
 
 ### Checklist A03
 Plan
-- [x] Identify enhancements: help output, custom target, modulo rule, repository field, range flags, banner
-- [ ] Define range flag syntax: `--range YYYY-MM-DD:YYYY-MM-DD`; mutually exclusive with `-y/--years N`
+- [x] Identify enhancements: help output, custom target, modulo rule, repository field, range flags, banner, statistics line
+- [x] Define range flag syntax: `--range YYYY-MM-DD:YYYY-MM-DD`; mutually exclusive with `-y/--years N`
 Build
 - [x] Implement custom target positional arg (done earlier in A02 extension)
 - [x] Implement help option with name/version/repo (added in A03)
 - [x] Add modulo 100 rule to `numerologySum` and adjust header
 - [x] Add repository field to `package.json`
-- [ ] Implement `--range` parsing overriding default constants
-- [ ] Implement `-y/--years` to set start = (today - N years + 1 day) at Jan 1? (Detailed rule: start = Jan 1 of currentYear-N+1, end = Dec 31 currentYear) (Finalize in code)
-- [ ] Add banner output (two-column right-aligned) with: Utility label, name, version, repository, target, date range
+- [x] Implement `--range` parsing overriding default constants
+- [x] Implement `-y/--years` dynamic last N years range
+- [x] Add banner output (label right-aligned, values left-aligned) with: Utility, Version, Repository, Target, Range
+- [x] Add total statistics line at end (total dates matching target)
 Verify
 - [x] Extend CLI tests for help output (name/version/repo)
-- [ ] Add tests for `--range` custom span & `-y` years
-- [ ] Test conflicting flags error (both provided)
+- [x] Add tests for `--range` custom span & `-y` years
+- [x] Test conflicting flags error (both provided)
+- [x] Test total statistics line & range alias -r
 Polish
-- [ ] README updates documenting new flags & banner
+- [x] README updates documenting new flags, banner, statistics line
 Merge
-- [ ] Commit, open PR, ensure tests green, update sprint doc with final state
+- [ ] Commit, open PR, ensure tests green, update sprint doc with final state (pending PR formalization)
 
-Status notes: Initial implemented items (help, modulo rule, repo field) completed directly on main; remaining range & banner items pending.
+Status notes: All A03 implementation tasks completed on main; formal PR step pending if required for process compliance.

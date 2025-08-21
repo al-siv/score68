@@ -49,6 +49,7 @@ Range    01.01.2022–31.12.2026
 Numerology date listing (sum = 68) using rule (D + M + YY(first pair) + YY(second pair)) % 100. Range: 01.01.2022–31.12.2026.
 
 2022: 25.01 24.02 23.03 22.04 21.05 20.06 19.07 18.08 17.09 16.10 15.11 14.12
+Total dates matching target 68: 60
 ```
 Each year in the range has exactly 12 such dates for target 68.
 
@@ -62,6 +63,7 @@ const dates = listDatesWithSum();
 const alt = listDatesWithSum(69);
 console.log(`Alt target 69 count: ${alt.length}`);
 console.log(dates.length);
+console.log(`Total default target count: ${dates.length}`);
 ```
 
 ## Tests

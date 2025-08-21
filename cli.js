@@ -35,14 +35,17 @@ try { parsedFlags = parseArgs(args); } catch (e) { console.error(e.message); pro
 if (parsedFlags.help) {
   const repo = pkg.repository && (typeof pkg.repository === 'string' ? pkg.repository : pkg.repository.url);
   const help = `${pkg.name} v${pkg.version}\n${repo || ''}\n\n` +
-  `Usage: node cli.js [targetSum] [--range YYYY-MM-DD:YYYY-MM-DD | -r YYYY-MM-DD:YYYY-MM-DD | -y N]\n\n` +
-    `Enumerate dates between ${START_DATE.toISOString().slice(0,10)} and ${END_DATE.toISOString().slice(0,10)} whose numerological sum (Day + Month + firstPair + secondPair) % 100 equals targetSum.\n\n` +
+    `Usage:\n` +
+    `  node cli.js [targetSum] [--range YYYY-MM-DD:YYYY-MM-DD | -r YYYY-MM-DD:YYYY-MM-DD | -y N]\n\n` +
+    `Description:\n` +
+    `  Enumerate dates between ${START_DATE.toISOString().slice(0,10)} and ${END_DATE.toISOString().slice(0,10)} whose numerological sum\n` + 
+    `  (Day + Month + firstPair + secondPair) % 100 equals targetSum.\n\n` +
     `Arguments:\n` +
-    `  targetSum   Non-negative integer (default ${TARGET_SUM})\n\n` +
+    `  targetSum      Non-negative integer (default ${TARGET_SUM})\n\n` +
     `Options:\n` +
-  `  --range,-r  Explicit date range YYYY-MM-DD:YYYY-MM-DD (inclusive)\n` +
-    `  -y, --years Last N years (Jan 1 of (currentYear-N+1) to Dec 31 currentYear)\n` +
-    `  -h, --help  Show this help message and exit`;
+    `  -r, --range    Explicit date range YYYY-MM-DD:YYYY-MM-DD (inclusive)\n` +
+    `  -y, --years    Last N years (Jan 1 of (currentYear-N+1) to Dec 31 currentYear)\n` +
+    `  -h, --help     Show this help message and exit`;
   console.log(help.trimEnd());
   process.exit(0);
 }
@@ -86,11 +89,11 @@ const grouped = groupDatesByYear(dates);
 // Banner
 const repo = pkg.repository && (typeof pkg.repository === 'string' ? pkg.repository : pkg.repository.url);
 console.log(formatBanner([
-  ['Utility', 'score68'],
-  ['Version', pkg.version],
-  ['Repository', repo || ''],
-  ['Target', target],
-  ['Range', `${formatDateFull(start)}–${formatDateFull(end)}`]
+  ['Utility:', 'score68'],
+  ['Version:', pkg.version],
+  ['Repository:', repo || ''],
+  ['Target:', target],
+  ['Range:', `${formatDateFull(start)}–${formatDateFull(end)}`]
 ]));
 console.log();
 console.log(formatHeader({ target, start, end }));
@@ -99,3 +102,5 @@ for (const year of Object.keys(grouped).sort()) {
   const line = grouped[year].map(d => formatDateDM(d)).join(' ');
   console.log(`${year}: ${line}`);
 }
+console.log();
+console.log(`Total dates matching target ${target}: ${dates.length}`);

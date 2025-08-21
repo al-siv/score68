@@ -8,13 +8,14 @@ const cliPath = path.resolve('cli.js');
 const helpOut = execFileSync(process.execPath, [cliPath, '--help'], { encoding: 'utf8' });
 assert.match(helpOut, /^score68 v0\.1\.0/m, 'Help should start with name and version');
 assert.match(helpOut, /github\.com\/al-siv\/score68/i, 'Help should contain repository URL');
-assert.match(helpOut, /Usage: node cli\.js \[targetSum\]/);
+assert.match(helpOut, /Usage:\n\s+node cli\.js \[targetSum\]/, 'Help usage block missing');
 assert.match(helpOut, /default 68/);
 assert.match(helpOut, /-h, --help/);
 
 // Custom target run (pick 69) should produce header with sum = 69
 const run69 = execFileSync(process.execPath, [cliPath, '69'], { encoding: 'utf8' });
 assert(run69.includes('sum = 69'), 'Header should reflect custom target 69');
+assert(/Total dates matching target 69: \d+/.test(run69), 'Should include total statistics line for target 69');
 
 // Range flag test
 const rangeOut = execFileSync(process.execPath, [cliPath, '68', '--range', '2024-01-01:2024-12-31'], { encoding: 'utf8' });
@@ -43,5 +44,6 @@ assert(conflictFailed, 'Expected conflict to fail');
 // Banner format columns (Utility and Version right-aligned near end of lines). Basic presence check.
 assert(/Utility\s+score68/.test(run69));
 assert(/Version\s+0\.1\.0/.test(run69));
+assert(/Total dates matching target 68: \d+/.test(rangeOut), 'Range run should include total line');
 
 console.log('CLI tests passed');
