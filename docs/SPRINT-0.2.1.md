@@ -8,7 +8,7 @@ Summary: A06 – Contribution workflow documentation & minor metadata polish.
   - [x] CONTRIBUTING.md author workflow
   - [x] CONTRIBUTING.md maintainer workflow
   - [x] README Contributing section
-  - [ ] PR creation & merge
+  - [x] PR creation & merge
 
 Notes
 - Version coupling: sprint file version 0.2.1.
