@@ -67,7 +67,8 @@ export function parseArgs(raw) {
     rangeEnd = new Date(Date.UTC(currentYear, 11, 31));
   }
 
-  return { ok: true, config: { help: flags.help, target, start: rangeStart, end: rangeEnd } };
+  const rangeProvided = Boolean(flags.range || flags.years);
+  return { ok: true, config: { help: flags.help, target, start: rangeStart, end: rangeEnd, rangeProvided } };
 }
 
 function err(code, message) {

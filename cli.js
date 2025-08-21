@@ -5,13 +5,55 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
 
+// CLI raw args
 const raw = process.argv.slice(2);
 const parsed = parseArgs(raw);
 if (!parsed.ok) {
   console.error(parsed.error.message);
   process.exit(1);
 }
-const { help, target, start, end } = parsed.config;
+const { help } = parsed.config; // Help flag immutable
+let { target, start, end } = parsed.config; // Mutated if env overrides apply
+
+// Environment variable overrides (lowest precedence: env < CLI flags/args)
+// Supported:
+//   SCORE68_TARGET   numeric target
+//   SCORE68_RANGE    YYYY-MM-DD:YYYY-MM-DD
+//   SCORE68_YEARS    last N years (mutually exclusive with SCORE68_RANGE)
+// Precedence: explicit CLI params win; only fill if CLI left default values.
+try {
+  if (process.env.SCORE68_TARGET && parsed.config.target === TARGET_SUM) {
+    const t = Number(process.env.SCORE68_TARGET);
+    if (!Number.isNaN(t) && t >= 0) target = t;
+  }
+  const rangeEnv = process.env.SCORE68_RANGE;
+  const yearsEnv = process.env.SCORE68_YEARS;
+  if (!parsed.config.rangeProvided) {
+    if (rangeEnv && yearsEnv) {
+      // Conflict in env vars: choose RANGE for determinism.
+      const [s, e] = rangeEnv.split(':');
+      const rs = new Date(s);
+      const re = new Date(e);
+      if (!isNaN(rs) && !isNaN(re) && rs <= re) { start = rs; end = re; }
+    } else if (rangeEnv) {
+      const [s, e] = rangeEnv.split(':');
+      const rs = new Date(s);
+      const re = new Date(e);
+      if (!isNaN(rs) && !isNaN(re) && rs <= re) { start = rs; end = re; }
+    } else if (yearsEnv && !isNaN(Number(yearsEnv))) {
+      const n = Number(yearsEnv);
+      if (n > 0) {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const firstYear = currentYear - n + 1;
+        start = new Date(Date.UTC(firstYear, 0, 1));
+        end = new Date(Date.UTC(currentYear, 11, 31));
+      }
+    }
+  }
+} catch {
+  // Silent: env overrides are best-effort; fall back to parsed values.
+}
 
 if (help) {
   const repo = pkg.repository && (typeof pkg.repository === 'string' ? pkg.repository : pkg.repository.url);
@@ -26,7 +68,11 @@ if (help) {
     `Options:\n` +
     `  -r, --range    Explicit date range YYYY-MM-DD:YYYY-MM-DD (inclusive)\n` +
     `  -y, --years    Last N years (Jan 1 of (currentYear-N+1) to Dec 31 currentYear)\n` +
-    `  -h, --help     Show this help message and exit`;
+    `  -h, --help     Show this help message and exit\n\n` +
+    `Environment overrides (lower precedence than CLI):\n` +
+    `  SCORE68_TARGET  numeric target (default if not provided via CLI)\n` +
+    `  SCORE68_RANGE   YYYY-MM-DD:YYYY-MM-DD (ignored if CLI range/years given)\n` +
+    `  SCORE68_YEARS   N (ignored if CLI range/years or SCORE68_RANGE provided)`;
   console.log(helpText.trimEnd());
   process.exit(0);
 }

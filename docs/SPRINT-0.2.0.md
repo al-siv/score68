@@ -10,10 +10,10 @@ Assignments (carried / new)
   - [x] Env var overrides + tests
   - [x] README overhaul
   - [x] CHANGELOG added
-  - [ ] CI workflow
-  - [ ] Verify script elevation (already present) — ensure CI integration
-  - [ ] Lint + test badge
-  - [ ] Publish prep (bin field, engines, files) (optional)
+  - [x] CI workflow
+  - [x] Verify script elevation (script present; integrated via CI steps)
+  - [x] Lint + test badge (CI badge added; test badge deferred)
+  - [x] Publish prep (bin field, engines, files) (kept private)
   - [ ] PR creation & merge
 
 Planned Additional Tasks
