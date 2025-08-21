@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "List dates (2022-02-24..2026-12-31) whose D + M + YY(first pair) + YY(second pair) = 68 (numerology example).",
+  "description": "List dates (2022-01-01..2026-12-31) whose D + M + YY(first pair) + YY(second pair) = target sum (default 68).",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/al-siv/score68.git"
+  },
   "scripts": {
     "dates:68": "node cli.js",
     "test": "node test/dates68.test.js"

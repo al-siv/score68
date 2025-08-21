@@ -9,7 +9,8 @@ export function numerologySum(date) {
   const year = date.getUTCFullYear();
   const firstPair = Math.floor(year / 100);
   const secondPair = year % 100;
-  return day + month + firstPair + secondPair;
+  const total = day + month + firstPair + secondPair;
+  return total % 100; // Apply modulo 100 rule (exceeding 100 wraps around)
 }
 
 export function* dateRange(start, end) {
@@ -48,5 +49,5 @@ export function groupDatesByYear(dates) {
 }
 
 export function formatHeader({ target = TARGET_SUM, start = START_DATE, end = END_DATE } = {}) {
-  return `Numerology date listing (sum = ${target}) using rule D + M + YY(first pair) + YY(second pair). Range: ${formatDateFull(start)}–${formatDateFull(end)}.`;
+  return `Numerology date listing (sum = ${target}) using rule (D + M + YY(first pair) + YY(second pair)) % 100. Range: ${formatDateFull(start)}–${formatDateFull(end)}.`;
 }
