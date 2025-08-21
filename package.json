@@ -10,6 +10,9 @@
   },
   "scripts": {
     "dates:68": "node cli.js",
-    "test": "node test/dates68.test.js"
+  "test": "node test/dates68.test.js && node test/cli.test.js && node test/args.test.js && node test/property.test.js"
+  },
+  "devDependencies": {
+    "fast-check": "^3.17.0"
   }
 }

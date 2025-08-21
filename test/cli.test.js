@@ -15,7 +15,7 @@ assert.match(helpOut, /-h, --help/);
 // Custom target run (pick 69) should produce header with sum = 69
 const run69 = execFileSync(process.execPath, [cliPath, '69'], { encoding: 'utf8' });
 assert(run69.includes('sum = 69'), 'Header should reflect custom target 69');
-assert(/Total dates matching target 69: \d+/.test(run69), 'Should include total statistics line for target 69');
+assert(/Total dates matching target '\\b69\\b': \d+/.test(run69) || /Total dates matching target '69': \d+/.test(run69), 'Should include total statistics line for target 69');
 
 // Range flag test
 const rangeOut = execFileSync(process.execPath, [cliPath, '68', '--range', '2024-01-01:2024-12-31'], { encoding: 'utf8' });
@@ -41,9 +41,9 @@ try {
 }
 assert(conflictFailed, 'Expected conflict to fail');
 
-// Banner format columns (Utility and Version right-aligned near end of lines). Basic presence check.
-assert(/Utility\s+score68/.test(run69));
-assert(/Version\s+0\.1\.0/.test(run69));
-assert(/Total dates matching target 68: \d+/.test(rangeOut), 'Range run should include total line');
+// Banner presence (labels with colons, values following)
+assert(/Utility:\s+score68/.test(run69));
+assert(/Version:\s+0\.1\.0/.test(run69));
+assert(/Total dates matching target '68': \d+/.test(rangeOut), 'Range run should include total line');
 
 console.log('CLI tests passed');

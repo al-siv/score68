@@ -49,7 +49,7 @@ export function groupDatesByYear(dates) {
 }
 
 export function formatHeader({ target = TARGET_SUM, start = START_DATE, end = END_DATE } = {}) {
-  return `Numerology date listing (sum = ${target}) using rule (D + M + YY(first pair) + YY(second pair)) % 100. Range: ${formatDateFull(start)}–${formatDateFull(end)}.`;
+  return `Numerology date listing (sum = ${target}) using rule (D + M + YY(first pair) + YY(second pair)) % 100.`;
 }
 
 // Banner formatting (label right-aligned, value left-aligned)
