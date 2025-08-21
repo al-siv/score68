@@ -103,24 +103,33 @@ Status notes: A03 fully completed on main (hash 1aa64df). PR step intentionally 
 
 ---
 
-Assignment A04: Refactor & FP Hardening (planned)
-Scope: Improve functional purity boundaries, add property-based style test scaffolding, streamline argument parsing, and prepare for potential publishing (remove private flag, add bin field) while keeping behavior stable.
+Assignment A04: Refactor & FP Hardening (in progress)
+Scope: Improve functional purity boundaries, add property-based style test scaffolding, streamline argument parsing, prepare for publishing (optional), and raise quality gates toward ≥95/100 (linting, docs, CI, version coupling) while keeping behavior stable.
 
 ### Checklist A04
 Plan
 - [x] Inventory refactor targets (argument parsing duplication, banner formatting, date range calculations)
 - [x] Select archetype: FP compliance refactor (§6.6 #2)
 Build
-- [x] Extract pure argument parsing into its own function/module with typed contract
-- [x] Add validation/error taxonomy (user vs bug errors) for flags
-- [ ] Introduce optional environment variable overrides (documented) (if retained after evaluation)
-- [x] Add property-style test for numerology invariant ( (value % 100) === value for produced sums )
+- [x] Extract pure argument parsing into its own function/module with typed contract (`src/args.js`)
+- [x] Add validation/error taxonomy (user vs bug errors) for flags (ERROR_CODES exported)
+- [ ] Implement optional environment variable overrides (decision pending; or mark canceled with rationale)
+- [x] Add property-style test for numerology invariant (`test/property.test.js`)
+- [ ] Add ESLint + Prettier (no warnings on changed files) and `npm run lint`
+- [ ] Add unified `npm run verify` script chaining lint + tests
+- [ ] Add GitHub Actions CI workflow (Node LTS) running verify
+- [ ] Introduce CHANGELOG and entry for 0.2.0 (parser refactor, property test)
 Verify
 - [x] Ensure all tests green & new tests cover edge cases (invalid flags, zero years, out-of-order range)
 - [x] Size & purity review (no side-effects in pure module; CLI remains thin)
+- [ ] Lint passes (post ESLint addition) with 0 errors/warnings
+- [ ] CI run green (workflow badge optional)
 Polish
-- [ ] README updates (argument parsing section, environment overrides if added)
+- [ ] README updates: argument parsing section, error codes table, property test note, version bump 0.2.0 changes summary
+- [ ] Document decision on env overrides (implemented or explicitly declined)
+- [ ] Prepare publishing: remove private flag, add `bin` field mapping `score68` to `cli.js` (optional; if deferred mark pended)
 Merge
-- [ ] Commit & open PR referencing A04, capture autonomous decisions
+- [ ] Open PR for A04 branch with DoD artifacts (test output, decisions, size) and merge after green
+- [ ] Create new sprint file `SPRINT-0.2.0.md` for post-0.2.0 work (version coupling §4.5) (may be separate assignment)
 
-Status notes: A04 not started; scope may adjust after review of A03 merge path.
+Status notes: A04 partially completed (core refactor & tests done; quality tooling/docs/publish tasks outstanding). Version bumped to 0.2.0 on refactor branch; sprint file still 0.1.0 (needs coupling update via new sprint file before further 0.2.x scope).

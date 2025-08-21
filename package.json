@@ -10,9 +10,14 @@
   },
   "scripts": {
     "dates:68": "node cli.js",
-  "test": "node test/dates68.test.js && node test/cli.test.js && node test/args.test.js && node test/property.test.js"
+  "test": "node test/dates68.test.js && node test/cli.test.js && node test/args.test.js && node test/property.test.js",
+  "lint": "eslint . --ext .js",
+  "format": "prettier -w .",
+  "verify": "npm run lint && npm test"
   },
   "devDependencies": {
-    "fast-check": "^3.17.0"
+    "eslint": "^9.33.0",
+    "fast-check": "^3.17.0",
+    "prettier": "^3.6.2"
   }
 }

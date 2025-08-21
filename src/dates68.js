@@ -48,7 +48,7 @@ export function groupDatesByYear(dates) {
   }, {});
 }
 
-export function formatHeader({ target = TARGET_SUM, start = START_DATE, end = END_DATE } = {}) {
+export function formatHeader({ target = TARGET_SUM } = {}) {
   return `Numerology date listing (sum = ${target}) using rule (D + M + YY(first pair) + YY(second pair)) % 100.`;
 }
 
