@@ -10,10 +10,22 @@
   },
   "scripts": {
     "dates:68": "node cli.js",
-  "test": "node test/dates68.test.js && node test/cli.test.js && node test/args.test.js && node test/property.test.js",
-  "lint": "eslint . --ext .js",
-  "format": "prettier -w .",
-  "verify": "npm run lint && npm test"
+    "test": "node test/dates68.test.js && node test/cli.test.js && node test/args.test.js && node test/property.test.js && node test/env.test.js",
+    "lint": "eslint . --ext .js",
+    "format": "prettier -w .",
+    "verify": "npm run lint && npm test"
+  },
+  "bin": {
+    "score68": "cli.js"
+  },
+  "files": [
+    "cli.js",
+    "src/",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
     "eslint": "^9.33.0",

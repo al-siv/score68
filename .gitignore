@@ -1,2 +1,4 @@
-/.github/
+# .github directory previously ignored (prevented committing CI workflow).
+# Allow .github for workflows and configs. Add specific ignores below if needed.
+
 node_modules/
