@@ -51,3 +51,13 @@ export function groupDatesByYear(dates) {
 export function formatHeader({ target = TARGET_SUM, start = START_DATE, end = END_DATE } = {}) {
   return `Numerology date listing (sum = ${target}) using rule (D + M + YY(first pair) + YY(second pair)) % 100. Range: ${formatDateFull(start)}–${formatDateFull(end)}.`;
 }
+
+// Banner formatting (two right-aligned columns: label & value)
+export function formatBanner(entries) {
+  // entries: array of [label, value]
+  const labelWidth = Math.max(...entries.map(([l]) => l.length));
+  const valueWidth = Math.max(...entries.map(([_, v]) => String(v).length));
+  return entries
+    .map(([l, v]) => `${l.padStart(labelWidth)}  ${String(v).padStart(valueWidth)}`)
+    .join('\n');
+}

@@ -67,3 +67,31 @@ Scope: Extend start date to 01.01.2022, eliminate hardcoded header literals, ext
 - [x] Update README sample to reflect inclusive January 25 date and clarify 12-per-year pattern
 - [x] Commit & push final A02 changes (39caa83) – PR opening skipped (direct merge path)
  - [x] Merge branch into main via --no-ff (merge commit 771dae6)
+
+---
+
+Assignment A03: Help, modulo rule, dynamic target, range & banner enhancements
+Scope: (1) Add CLI help (-h/--help) with name/version/repository, (2) support custom target sum argument, (3) apply modulo 100 rule to numerology sum, (4) add repository metadata, (5) add flexible date range flags (`--range` explicit or `-y/--years` last N years), (6) add formatted banner with app metadata and parameters.
+
+### Checklist A03
+Plan
+- [x] Identify enhancements: help output, custom target, modulo rule, repository field, range flags, banner
+- [ ] Define range flag syntax: `--range YYYY-MM-DD:YYYY-MM-DD`; mutually exclusive with `-y/--years N`
+Build
+- [x] Implement custom target positional arg (done earlier in A02 extension)
+- [x] Implement help option with name/version/repo (added in A03)
+- [x] Add modulo 100 rule to `numerologySum` and adjust header
+- [x] Add repository field to `package.json`
+- [ ] Implement `--range` parsing overriding default constants
+- [ ] Implement `-y/--years` to set start = (today - N years + 1 day) at Jan 1? (Detailed rule: start = Jan 1 of currentYear-N+1, end = Dec 31 currentYear) (Finalize in code)
+- [ ] Add banner output (two-column right-aligned) with: Utility label, name, version, repository, target, date range
+Verify
+- [x] Extend CLI tests for help output (name/version/repo)
+- [ ] Add tests for `--range` custom span & `-y` years
+- [ ] Test conflicting flags error (both provided)
+Polish
+- [ ] README updates documenting new flags & banner
+Merge
+- [ ] Commit, open PR, ensure tests green, update sprint doc with final state
+
+Status notes: Initial implemented items (help, modulo rule, repo field) completed directly on main; remaining range & banner items pending.
