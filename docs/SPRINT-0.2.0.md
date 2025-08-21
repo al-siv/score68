@@ -13,7 +13,7 @@ Summary: Continue A04 refactor & quality hardening; introduce CI, changelog, env
   - [x] Verify script elevation (script present; integrated via CI steps)
   - [x] Lint + test badge (CI badge added; test badge deferred)
   - [x] Publish prep (bin field, engines, files) (kept private)
-  - [ ] PR creation & merge
+  - [x] PR creation & merge (direct merge per maintainer instruction; tagging to follow)
 
 - Assignment A05 (CI & Release Prep) (tentative)
   - [x] GitHub Actions matrix (Node 18, 20)
