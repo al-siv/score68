@@ -1,12 +1,16 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json');
 
 const cliPath = path.resolve('cli.js');
 
 // Help output
 const helpOut = execFileSync(process.execPath, [cliPath, '--help'], { encoding: 'utf8' });
-assert.match(helpOut, /^score68 v0\.2\.0/m, 'Help should start with name and version');
+const versionPattern = new RegExp(`^score68 v${pkg.version.replace(/\./g, '\\.')}`, 'm');
+assert.match(helpOut, versionPattern, 'Help should start with name and current version');
 assert.match(helpOut, /github\.com\/al-siv\/score68/i, 'Help should contain repository URL');
 assert.match(helpOut, /Usage:\n\s+node cli\.js \[targetSum\]/, 'Help usage block missing');
 assert.match(helpOut, /default 68/);
@@ -43,7 +47,8 @@ assert(conflictFailed, 'Expected conflict to fail');
 
 // Banner presence (labels with colons, values following)
 assert(/Utility:\s+score68/.test(run69));
-assert(/Version:\s+0\.2\.0/.test(run69));
+const bannerVersionPattern = new RegExp(`Version:\\s+${pkg.version.replace(/\./g, '\\.')}`);
+assert(bannerVersionPattern.test(run69));
 assert(/Total dates matching target '68': \d+/.test(rangeOut), 'Range run should include total line');
 
 console.log('CLI tests passed');

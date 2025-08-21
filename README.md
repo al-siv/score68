@@ -127,6 +127,9 @@ Release process: see `docs/BUILD_RELEASE.md`.
 ## Changelog
 See `CHANGELOG.md` for version history.
 
+## Contributing
+See `CONTRIBUTING.md` for author & maintainer workflows (branch naming, verification, PR template usage, merge & tag steps).
+
 ## Non-goals
 - Time zone localization (uses UTC internally)
 - Alternative numerology formulas
