@@ -1,2 +1,5 @@
+# Ignore node modules
 node_modules/
-.github/copilot-instructions.md
+
+# DS Store files
+.DS_Store
