@@ -1,6 +1,5 @@
 # Sprint 0.1.0
 
-
 ## Assignment A01
 
 - [x] M01 FP-First Agent Engineering (subset: minimal FP example script) – deliver pure script & checklist
@@ -31,6 +30,7 @@
 ---
 
 ## Assignment A02
+
 - [x] Create branch `sprint-0.1.0-A02-2025-08-16`
 - [x] Update START_DATE to 2022-01-01 in `src/dates68.js`
 - [x] Adjust CLI header to use constants (dynamic range + target) instead of hardcoded text
@@ -46,6 +46,7 @@
 ---
 
 ## Assignment A03
+
 - [x] Create branch `sprint-0.1.0-A03-2025-08-16`
 - [x] Implement CLI help (-h/--help) with name/version/repository
 - [x] Support custom target sum argument

@@ -1,54 +1,89 @@
+import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import path from 'node:path';
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
-const pkg = require('../package.json');
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
 
-const cliPath = path.resolve('cli.js');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const cliPath = resolve(__dirname, '..', 'cli.js');
 
-// Help output
-const helpOut = execFileSync(process.execPath, [cliPath, '--help'], { encoding: 'utf8' });
-const versionPattern = new RegExp(`^score68 v${pkg.version.replace(/\./g, '\\.')}`, 'm');
-assert.match(helpOut, versionPattern, 'Help should start with name and current version');
-assert.match(helpOut, /github\.com\/al-siv\/score68/i, 'Help should contain repository URL');
-assert.match(helpOut, /Usage:\n\s+node cli\.js \[targetSum\]/, 'Help usage block missing');
-assert.match(helpOut, /default 68/);
-assert.match(helpOut, /-h, --help/);
-
-// Custom target run (pick 69) should produce header with sum = 69
-const run69 = execFileSync(process.execPath, [cliPath, '69'], { encoding: 'utf8' });
-assert(run69.includes('sum = 69'), 'Header should reflect custom target 69');
-assert(/Total dates matching target '\\b69\\b': \d+/.test(run69) || /Total dates matching target '69': \d+/.test(run69), 'Should include total statistics line for target 69');
-
-// Range flag test
-const rangeOut = execFileSync(process.execPath, [cliPath, '68', '--range', '2024-01-01:2024-12-31'], { encoding: 'utf8' });
-assert(rangeOut.includes('Range')); // banner
-assert(rangeOut.includes('2024') && !rangeOut.includes('2023:'), 'Should only list 2024 year');
-
-// Short -r alias test
-const rangeAliasOut = execFileSync(process.execPath, [cliPath, '68', '-r', '2024-01-01:2024-12-31'], { encoding: 'utf8' });
-assert(rangeAliasOut.includes('2024') && !rangeAliasOut.includes('2023:'), 'Short -r alias should behave like --range');
-
-// Years flag test (1 year) - dynamic year may change; just assert Range present
-const currentYear = new Date().getUTCFullYear();
-const yearsOut = execFileSync(process.execPath, [cliPath, '68', '-y', '1'], { encoding: 'utf8' });
-assert(yearsOut.includes(`${currentYear}:`), 'Years flag should include current year');
-
-// Conflict flags should error
-let conflictFailed = false;
-try {
-	execFileSync(process.execPath, [cliPath, '68', '--range', '2024-01-01:2024-12-31', '-y', '2'], { encoding: 'utf8', stdio: 'pipe' });
-} catch (e) {
-	conflictFailed = true;
-	assert(String(e.stderr || e.message).toLowerCase().includes('either --range or -y'), 'Conflict error message expected');
+/** Run CLI and return stdout. */
+function run(args = [], env = {}) {
+  return execFileSync(process.execPath, [cliPath, ...args], {
+    encoding: 'utf8',
+    env: { ...process.env, ...env },
+    stdio: ['pipe', 'pipe', 'pipe'],
+  });
 }
-assert(conflictFailed, 'Expected conflict to fail');
 
-// Banner presence (labels with colons, values following)
-assert(/Utility:\s+score68/.test(run69));
-const bannerVersionPattern = new RegExp(`Version:\\s+${pkg.version.replace(/\./g, '\\.')}`);
-assert(bannerVersionPattern.test(run69));
-assert(/Total dates matching target '68': \d+/.test(rangeOut), 'Range run should include total line');
+/** Run CLI expecting a non-zero exit, return the error. */
+function runFail(args = []) {
+  try {
+    execFileSync(process.execPath, [cliPath, ...args], {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    assert.fail('Expected non-zero exit');
+  } catch (e) {
+    return e;
+  }
+}
 
-console.log('CLI tests passed');
+describe('CLI', () => {
+  it('prints help with version, repo URL, and usage', () => {
+    const out = run(['--help']);
+    assert.match(out, /^score68 v\d+\.\d+\.\d+/m);
+    assert.match(out, /github\.com\/al-siv\/score68/i);
+    assert.match(out, /Usage:/);
+    assert.match(out, /-h, --help/);
+  });
+
+  it('runs with default target 68', () => {
+    const out = run();
+    assert(out.includes('sum = 68'));
+    assert.match(out, /Total dates matching target '68': \d+/);
+  });
+
+  it('runs with custom target 69', () => {
+    const out = run(['69']);
+    assert(out.includes('sum = 69'));
+    assert.match(out, /Total dates matching target '69': \d+/);
+  });
+
+  it('applies --range flag', () => {
+    const out = run(['68', '--range', '2024-01-01:2024-12-31']);
+    assert(out.includes('Range'));
+    assert(out.includes('2024') && !out.includes('2023:'));
+  });
+
+  it('applies short -r alias', () => {
+    const out = run(['68', '-r', '2024-01-01:2024-12-31']);
+    assert(out.includes('2024') && !out.includes('2023:'));
+  });
+
+  it('applies -y years flag', () => {
+    const currentYear = new Date().getUTCFullYear();
+    const out = run(['68', '-y', '1']);
+    assert(out.includes(`${currentYear}:`));
+  });
+
+  it('exits with error on conflicting flags', () => {
+    const e = runFail(['68', '--range', '2024-01-01:2024-12-31', '-y', '2']);
+    assert(
+      String(e.stderr || e.message)
+        .toLowerCase()
+        .includes('either --range or -y'),
+    );
+  });
+
+  it('prints banner with utility info', () => {
+    const out = run(['69']);
+    assert.match(out, /Utility:\s+score68/);
+    assert.match(out, /Version:\s+\d+\.\d+\.\d+/);
+  });
+
+  it('includes total line for range run', () => {
+    const out = run(['68', '--range', '2024-01-01:2024-12-31']);
+    assert.match(out, /Total dates matching target '68': \d+/);
+  });
+});

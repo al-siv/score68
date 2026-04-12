@@ -1,44 +1,65 @@
+import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseArgs } from '../src/args.js';
+import { parseArgs, ERROR_CODES } from '../src/args.js';
 
-// Valid basic
-let r = parseArgs([]);
-assert(r.ok && r.config.target === 68, 'Default target 68');
+describe('parseArgs', () => {
+  it('returns default config for empty args', () => {
+    const r = parseArgs([]);
+    assert(r.ok);
+    assert.equal(r.config.target, 68);
+    assert.equal(r.config.help, false);
+  });
 
-// Help flag
-r = parseArgs(['--help']);
-assert(r.ok && r.config.help, 'Help flag parsed');
+  it('parses --help flag', () => {
+    const r = parseArgs(['--help']);
+    assert(r.ok && r.config.help);
+  });
 
-// Custom target
-r = parseArgs(['70']);
-assert(r.ok && r.config.target === 70, 'Custom target 70');
+  it('parses custom target as positional', () => {
+    const r = parseArgs(['70']);
+    assert(r.ok && r.config.target === 70);
+  });
 
-// Range
-r = parseArgs(['--range', '2024-01-01:2024-12-31']);
-assert(r.ok && r.config.start.toISOString().startsWith('2024-01-01') && r.config.end.toISOString().startsWith('2024-12-31'), 'Range parsed');
+  it('parses --range flag', () => {
+    const r = parseArgs(['--range', '2024-01-01:2024-12-31']);
+    assert(r.ok);
+    assert(r.config.start.toISOString().startsWith('2024-01-01'));
+    assert(r.config.end.toISOString().startsWith('2024-12-31'));
+  });
 
-// Years
-r = parseArgs(['-y', '1']);
-assert(r.ok && r.config.start.getUTCFullYear() <= r.config.end.getUTCFullYear(), 'Years range created');
+  it('parses short -y flag', () => {
+    const r = parseArgs(['-y', '1']);
+    assert(r.ok);
+    assert(r.config.start.getUTCFullYear() <= r.config.end.getUTCFullYear());
+  });
 
-// Conflict
-r = parseArgs(['--range', '2024-01-01:2024-12-31', '-y', '2']);
-assert(!r.ok && r.error.code === 'CONFLICT_RANGE_YEARS', 'Conflict detected');
+  it('rejects conflicting --range and -y', () => {
+    const r = parseArgs(['--range', '2024-01-01:2024-12-31', '-y', '2']);
+    assert(!r.ok);
+    assert.equal(r.error.code, ERROR_CODES.CONFLICT_RANGE_YEARS);
+  });
 
-// Invalid target
-r = parseArgs(['-1']);
-assert(!r.ok && r.error.code === 'INVALID_TARGET', 'Negative target invalid');
+  it('rejects negative target', () => {
+    const r = parseArgs(['-1']);
+    assert(!r.ok);
+    assert.equal(r.error.code, ERROR_CODES.INVALID_TARGET);
+  });
 
-// Invalid flag
-r = parseArgs(['--unknown']);
-assert(!r.ok && r.error.code === 'UNKNOWN_FLAG', 'Unknown flag error');
+  it('rejects unknown flag', () => {
+    const r = parseArgs(['--unknown']);
+    assert(!r.ok);
+    assert.equal(r.error.code, ERROR_CODES.UNKNOWN_FLAG);
+  });
 
-// Invalid range format
-r = parseArgs(['--range', 'bad']);
-assert(!r.ok && r.error.code === 'RANGE_FORMAT', 'Range format error');
+  it('rejects malformed range', () => {
+    const r = parseArgs(['--range', 'bad']);
+    assert(!r.ok);
+    assert.equal(r.error.code, ERROR_CODES.RANGE_FORMAT);
+  });
 
-// Invalid years value
-r = parseArgs(['-y', '0']);
-assert(!r.ok && r.error.code === 'YEARS_VALUE', 'Years must be positive');
-
-console.log('Args parser tests passed');
+  it('rejects zero years', () => {
+    const r = parseArgs(['-y', '0']);
+    assert(!r.ok);
+    assert.equal(r.error.code, ERROR_CODES.YEARS_VALUE);
+  });
+});

@@ -3,7 +3,9 @@
 This project follows a sprint/assignment model with strict FP & quality gates. Use this guide for submitting and approving pull requests.
 
 ## 1. PR Author Workflow
+
 Step-by-step (one assignment branch per PR):
+
 1. Sync main:
    ```bash
    git checkout main && git pull --ff-only origin main
@@ -38,6 +40,7 @@ Step-by-step (one assignment branch per PR):
 10. Maintainer performs merge after approval & green checks.
 
 ## 2. Maintainer (Repo Admin) Review & Merge Workflow
+
 1. Confirm branch naming compliance.
 2. Check sprint file alignment & scope.
 3. Validate quality gates (CI build (18.x)/(20.x) green, verify passes).
@@ -60,19 +63,23 @@ Step-by-step (one assignment branch per PR):
 10. Branch auto-deletes remotely; delete locally if needed.
 
 ## 3. Commit Message Convention
+
 - Slice commit: `A<AA>: <verb> <object>`
 - Branch init: `sprint: init A<AA> <short scope>`
 - Merge: `merge: sprint <SEMVER> A<AA>`
 
 ## 4. Scope & Checklist Discipline
+
 - One assignment per PR.
 - Never batch multiple completed checklist items into one commit.
 - Use `[-]` with reason instead of deleting scope.
 
 ## 5. Quality Gates Summary
+
 `npm run verify` = ESLint + all tests (unit, property, env). All must pass pre-PR & pre-merge.
 
 ## 6. Fast Reference (Author)
+
 ```bash
 git checkout main && git pull --ff-only origin main
 git checkout -b sprint-<SEMVER>-A<AA>-<DATE>
@@ -83,6 +90,7 @@ git fetch origin && git pull --rebase origin main && npm run verify && git push
 ```
 
 ## 7. Fast Reference (Maintainer)
+
 ```bash
 # after approval & green checks
 git checkout main && git pull --ff-only origin main
@@ -92,9 +100,11 @@ git tag -a v<SEMVER> -m "score68 <SEMVER>" && git push origin v<SEMVER>
 ```
 
 ## 8. Future Enhancements
+
 - CODEOWNERS
 - Coverage badge
 - Conversation resolution enforcement
 
 ---
+
 Questions: open an issue or start a discussion.

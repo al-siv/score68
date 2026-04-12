@@ -11,5 +11,6 @@ Summary: A06 – Contribution workflow documentation & minor metadata polish.
   - [x] PR creation & merge
 
 Notes
+
 - Version coupling: sprint file version 0.2.1.
 - Scope: docs only; no feature changes.

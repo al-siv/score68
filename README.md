@@ -7,14 +7,18 @@ Date numerology enumerator: list dates whose `(Day + Month + YY(first) + YY(last
 ---
 
 ## Quick Start
+
 Clone and run (private package, local usage):
+
 ```
 git clone https://github.com/al-siv/score68.git
 cd score68
 npm install
 npm run dates:68
 ```
+
 Sample output excerpt:
+
 ```
 Utility:  score68
 Version:  <version>
@@ -26,6 +30,7 @@ Total dates matching target '68': 60
 ```
 
 ## Features
+
 - Fixed default range: 2022-01-01..2026-12-31 (UTC)
 - Custom target positional argument
 - Explicit range flag (`--range` / `-r`)
@@ -35,14 +40,19 @@ Total dates matching target '68': 60
 - Property-based invariant test coverage
 
 ## Formula
+
 Raw sum:
+
 ```
 Day + Month + (first two digits of year) + (last two digits of year)
 ```
+
 Effective value: `raw % 100`.
 
 ## Installation
+
 Current state: private (not published to npm). Use clone method above. Planned publish path (if enabled later):
+
 ```
 npm install score68
 npx score68
@@ -51,89 +61,136 @@ npx score68
 ## CLI Usage
 
 ### Commands / Examples
-| Purpose              | Command |
-|----------------------|---------|
-| Default target 68    | `npm run dates:68` |
-| Custom target 69     | `node cli.js 69` |
+
+| Purpose              | Command                                        |
+| -------------------- | ---------------------------------------------- |
+| Default target 68    | `npm run dates:68`                             |
+| Custom target 69     | `node cli.js 69`                               |
 | Explicit range       | `node cli.js 68 --range 2000-01-01:2025-12-31` |
-| Explicit range (sh.) | `node cli.js 68 -r 2000-01-01:2025-12-31` |
-| Last 10 years        | `node cli.js 68 -y 10` |
-| Help                 | `node cli.js --help` |
+| Explicit range (sh.) | `node cli.js 68 -r 2000-01-01:2025-12-31`      |
+| Last 10 years        | `node cli.js 68 -y 10`                         |
+| Help                 | `node cli.js --help`                           |
 
 ### Flags
-| Flag | Alias | Value | Description |
-|------|-------|-------|-------------|
-| `--range` | `-r` | `YYYY-MM-DD:YYYY-MM-DD` | Inclusive explicit date span |
-| `--years` | `-y` | `N` | Last N full calendar years (ending current year) |
-| `--help`  | `-h` | – | Show help |
+
+| Flag      | Alias | Value                   | Description                                      |
+| --------- | ----- | ----------------------- | ------------------------------------------------ |
+| `--range` | `-r`  | `YYYY-MM-DD:YYYY-MM-DD` | Inclusive explicit date span                     |
+| `--years` | `-y`  | `N`                     | Last N full calendar years (ending current year) |
+| `--help`  | `-h`  | –                       | Show help                                        |
 
 Mutual exclusion: `--range` and `--years` cannot be combined.
 
 ### Environment Variables
+
 Lower precedence than CLI arguments.
 
-| Variable | Example | Meaning |
-|----------|---------|---------|
-| `SCORE68_TARGET` | `72` | Numeric target (non-negative integer) |
-| `SCORE68_RANGE`  | `2024-01-01:2024-12-31` | Explicit range (overrides years) |
-| `SCORE68_YEARS`  | `5` | Last N years (ignored if range provided) |
+| Variable         | Example                 | Meaning                                  |
+| ---------------- | ----------------------- | ---------------------------------------- |
+| `SCORE68_TARGET` | `72`                    | Numeric target (non-negative integer)    |
+| `SCORE68_RANGE`  | `2024-01-01:2024-12-31` | Explicit range (overrides years)         |
+| `SCORE68_YEARS`  | `5`                     | Last N years (ignored if range provided) |
 
 If both `SCORE68_RANGE` and `SCORE68_YEARS` are set, the range takes priority.
 
 ### Exit / Error Behavior
+
 Process exits with code 1 on invalid input. Example:
+
 ```
 $ node cli.js --years 0
 years must be positive integer
 ```
 
 ## Error Codes (parser)
-| Code | Condition |
-|------|-----------|
-| `UNKNOWN_FLAG` | Unrecognized flag (not negative number) |
-| `INVALID_TARGET` | Target positional not a non-negative integer |
-| `RANGE_FORMAT` | `--range` value not matching pattern |
-| `RANGE_ORDER` | Range start > end or invalid dates |
-| `YEARS_VALUE` | `--years` value missing or non-positive integer |
-| `CONFLICT_RANGE_YEARS` | Both range and years supplied |
+
+| Code                   | Condition                                       |
+| ---------------------- | ----------------------------------------------- |
+| `UNKNOWN_FLAG`         | Unrecognized flag (not negative number)         |
+| `INVALID_TARGET`       | Target positional not a non-negative integer    |
+| `RANGE_FORMAT`         | `--range` value not matching pattern            |
+| `RANGE_ORDER`          | Range start > end or invalid dates              |
+| `YEARS_VALUE`          | `--years` value missing or non-positive integer |
+| `CONFLICT_RANGE_YEARS` | Both range and years supplied                   |
 
 ## Programmatic API
+
 Module: `src/dates68.js` (ESM). Example:
+
 ```js
 import { listDatesWithSum, numerologySum } from './src/dates68.js';
 
-const matches = listDatesWithSum();           // default target (68) and default range
-const alt = listDatesWithSum(69);             // alternate target
+const matches = listDatesWithSum(); // default target (68) and default range
+const alt = listDatesWithSum(69); // alternate target
 console.log(matches.length);
 ```
+
 Function contract:
+
 ```
 listDatesWithSum(target = 68, startDate = START_DATE, endDate = END_DATE) -> Date[]
 ```
 
 ## Development
-| Task | Command |
-|------|---------|
-| Install deps | `npm install` |
-| Run all tests | `npm test` |
-| Lint | `npm run lint` |
-| Format | `npm run format` |
+
+| Task                  | Command          |
+| --------------------- | ---------------- |
+| Install deps          | `npm install`    |
+| Run all tests         | `npm test`       |
+| Lint                  | `npm run lint`   |
+| Format                | `npm run format` |
 | Verify (lint + tests) | `npm run verify` |
 
-Node version: target modern LTS (>=18).
+Node version: ≥22 (LTS).
 
 Release process: see `docs/archive/BUILD_RELEASE-0.2.0.md`.
 
 ## Changelog
+
 See `CHANGELOG.md` for version history.
 
 ## Contributing
+
 See `CONTRIBUTING.md` for author & maintainer workflows (branch naming, verification, PR template usage, merge & tag steps).
 
+## Architecture
+
+```
+cli.js              Thin impure shell (I/O only)
+src/
+  dates68.js        Core date-scoring computation (pure)
+  args.js           CLI argument parser (pure, discriminated union)
+  env.js            Environment variable resolver (pure, DI)
+test/
+  dates68.test.js   Unit: core computation + formatting
+  args.test.js      Unit: argument parser
+  cli.test.js       Integration: full CLI invocations
+  env.test.js       Integration: env variable overrides
+  property.test.js  Property-based: numerology formula invariants
+```
+
+Design: all `src/` modules are **pure functions** — no `process`, `console`, or `fs`. Side-effects live only in `cli.js`. Environment resolution uses dependency injection (`resolveEnv(env, config)`) for testability.
+
+## LLM-Assisted Development
+
+This project includes GitHub Copilot integration files:
+
+| File | Purpose |
+|------|---------|
+| `.github/copilot-instructions.md` | Always-on project context |
+| `.github/instructions/quality-gates.instructions.md` | Auto-applied to `**/*.js` — validation rules |
+| `.github/instructions/code-style.instructions.md` | Auto-applied to `src/**` — coding conventions |
+| `.github/instructions/testing.instructions.md` | Auto-applied to `test/**` — test patterns |
+| `.github/prompts/add-feature.prompt.md` | Reusable prompt: add a feature |
+| `.github/prompts/investigate-bug.prompt.md` | Reusable prompt: diagnose a bug |
+| `.github/prompts/code-review.prompt.md` | Reusable prompt: code review |
+
 ## Non-goals
+
 - Time zone localization (uses UTC internally)
 - Alternative numerology formulas
 - Output formatting customization beyond provided flags
 
 ## License
+
 CC0 1.0 Universal. See `LICENSE`.

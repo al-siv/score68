@@ -20,6 +20,6 @@ Summary: Continue A04 refactor & quality hardening; introduce CI, changelog, env
   - [ ] Tag automation (manual for now)
   - [x] Release guide (`docs/BUILD_RELEASE.md`)
   - [x] PR template (`.github/pull_request_template.md`)
-Notes
+        Notes
 - Version coupling: sprint file aligned with 0.2.0.
 - Scope creep control: new features require new assignment beyond A04.

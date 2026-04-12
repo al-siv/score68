@@ -1,19 +1,22 @@
 import js from '@eslint/js';
+import globals from 'globals';
 
 export default [
   js.configs.recommended,
   {
     languageOptions: {
-      globals: {
-        console: 'readonly',
-        process: 'readonly'
-      }
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: globals.nodeBuiltin,
     },
     rules: {
       'no-var': 'error',
       'prefer-const': 'error',
       eqeqeq: ['error', 'always'],
-      'no-unused-vars': ['error', { args: 'after-used', ignoreRestSiblings: true }]
-    }
-  }
+      'no-unused-vars': ['error', { args: 'after-used', ignoreRestSiblings: true }],
+    },
+  },
+  {
+    ignores: ['node_modules/**'],
+  },
 ];

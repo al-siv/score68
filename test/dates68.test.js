@@ -1,54 +1,90 @@
+import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { numerologySum, listDatesWithSum, TARGET_SUM, START_DATE, END_DATE, groupDatesByYear, formatDateDM, formatHeader, formatDateFull } from '../src/dates68.js';
+import {
+  numerologySum,
+  listDatesWithSum,
+  TARGET_SUM,
+  START_DATE,
+  END_DATE,
+  groupDatesByYear,
+  formatDateDM,
+  formatDateFull,
+  formatHeader,
+} from '../src/dates68.js';
 
-const dates = listDatesWithSum();
+describe('numerologySum', () => {
+  it('computes correct sum for a known date', () => {
+    // 2022-01-25: 25 + 1 + 20 + 22 = 68
+    assert.equal(numerologySum(new Date(Date.UTC(2022, 0, 25))), 68);
+  });
 
-// Ensure non-empty
-assert.ok(dates.length > 0, 'Expected some dates');
+  it('applies modulo 100 when raw sum exceeds 99', () => {
+    // 2099-12-31: 31 + 12 + 20 + 99 = 162 → 62
+    const date = new Date(Date.UTC(2099, 11, 31));
+    assert.equal(31 + 12 + 20 + 99, 162);
+    assert.equal(numerologySum(date), 62);
+  });
+});
 
-// All sums are 68
-for (const d of dates) {
-  assert.equal(numerologySum(d), TARGET_SUM, `Date ${d.toISOString()} should sum to ${TARGET_SUM}`);
-}
+describe('listDatesWithSum', () => {
+  const dates = listDatesWithSum();
 
-// Count per year expectations (derived earlier)
-const grouped = groupDatesByYear(dates);
-const counts = Object.fromEntries(Object.entries(grouped).map(([y, arr]) => [y, arr.length]));
-// Each year in the range has exactly 12 qualifying dates (day + month constant per year).
-assert.deepEqual(counts, { '2022': 12, '2023': 12, '2024': 12, '2025': 12, '2026': 12 });
+  it('returns non-empty result for default target', () => {
+    assert.ok(dates.length > 0);
+  });
 
-// Formatting helpers
-const sample = grouped['2022'][0];
-assert.match(formatDateDM(sample), /^\d{2}\.\d{2}$/);
-assert.match(formatDateFull(sample), /^\d{2}\.\d{2}\.2022$/);
+  it('returns only dates matching the target sum', () => {
+    for (const d of dates) {
+      assert.equal(numerologySum(d), TARGET_SUM);
+    }
+  });
 
-// Header formatting
-const header = formatHeader({ target: TARGET_SUM, start: START_DATE, end: END_DATE });
-assert(header.includes('sum = 68'));
-// Range years were removed from header formatting; ensure rule wording present
-assert(header.includes('% 100'));
+  it('yields exactly 12 dates per year in default range', () => {
+    const grouped = groupDatesByYear(dates);
+    const counts = Object.fromEntries(Object.entries(grouped).map(([y, arr]) => [y, arr.length]));
+    assert.deepEqual(counts, { 2022: 12, 2023: 12, 2024: 12, 2025: 12, 2026: 12 });
+  });
 
-console.log('All tests passed. Total dates:', dates.length);
+  it('works with a custom target', () => {
+    const alt = listDatesWithSum(TARGET_SUM + 1, START_DATE, END_DATE);
+    for (const d of alt) {
+      assert.equal(numerologySum(d), TARGET_SUM + 1);
+    }
+  });
 
-// --- Custom target test ---
-// Choose a nearby target (e.g., 69) and ensure all produced dates match that sum
-const altTarget = TARGET_SUM + 1;
-const altDates = listDatesWithSum(altTarget, START_DATE, END_DATE);
-for (const d of altDates) {
-  assert.equal(numerologySum(d), altTarget, `Alt target date mismatch for ${d.toISOString()}`);
-}
-// Alt target may have 0 or more dates; simple invariant only.
-console.log(`Alt target ${altTarget} produced ${altDates.length} dates.`);
+  it('finds a single date in a one-day range', () => {
+    const d = new Date(Date.UTC(2099, 11, 31));
+    assert.equal(listDatesWithSum(62, d, d).length, 1);
+  });
+});
 
-// --- Modulo 100 behavior test ---
-// Construct a date with raw sum > 100. Example: 2099-12-31
-// Raw components: day=31, month=12, firstPair=20, secondPair=99 => raw total = 162 -> 62 after %100.
-const future = new Date(Date.UTC(2099, 11, 31));
-const rawTotal = 31 + 12 + 20 + 99;
-assert.equal(rawTotal, 162);
-assert.equal(numerologySum(future), 62, 'Modulo 100 remainder expected (162 % 100 = 62)');
+describe('groupDatesByYear', () => {
+  it('groups dates by UTC year', () => {
+    const dates = [
+      new Date(Date.UTC(2022, 0, 1)),
+      new Date(Date.UTC(2022, 5, 15)),
+      new Date(Date.UTC(2023, 0, 1)),
+    ];
+    const grouped = groupDatesByYear(dates);
+    assert.equal(grouped[2022].length, 2);
+    assert.equal(grouped[2023].length, 1);
+  });
+});
 
-// Ensure listDatesWithSum can find that date when specifying a range including it and target 62.
-const dates62 = listDatesWithSum(62, future, future);
-assert.equal(dates62.length, 1, 'Expected exactly one match for the future test date');
-assert.equal(dates62[0].toISOString().slice(0,10), future.toISOString().slice(0,10));
+describe('formatting', () => {
+  const sample = new Date(Date.UTC(2022, 0, 25));
+
+  it('formatDateDM returns DD.MM', () => {
+    assert.equal(formatDateDM(sample), '25.01');
+  });
+
+  it('formatDateFull returns DD.MM.YYYY', () => {
+    assert.equal(formatDateFull(sample), '25.01.2022');
+  });
+
+  it('formatHeader includes target and modulo rule', () => {
+    const header = formatHeader({ target: 68 });
+    assert(header.includes('sum = 68'));
+    assert(header.includes('% 100'));
+  });
+});
