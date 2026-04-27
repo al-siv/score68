@@ -188,3 +188,15 @@ Where:
 | `score68-target` | `number` | `numerologySum(today)`   |
 | `score68-lang`   | `string` | System locale or `"en"`  |
 | `score68-theme`  | `string` | `"light"`                |
+
+## Release / Final Build Protocol
+
+When a task set is complete and the codebase is ready for delivery, the agent
+must run the full build pipeline to produce updated distributables:
+
+1. `npm run verify` — lint + typecheck + tests must pass.
+2. `npm run build` — production bundles (`out/`).
+3. `npm run package` — platform-specific installers (`dist/`).
+
+Do not consider a task fully finished until the `dist/` folder contains the
+latest `.dmg`, `.zip`, or equivalent artifacts for the current platform.

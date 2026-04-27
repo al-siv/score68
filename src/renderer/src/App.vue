@@ -71,6 +71,7 @@ onUnmounted(() => {
     @toggle-lang="toggleLang"
   />
   <InfoPanel
+    :target="target"
     :today-value="todayValue"
     :range-label="rangeLabel"
     :is-mobile="isMobile"

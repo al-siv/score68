@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { YearGroup } from '../../../shared/core'
-import { formatDateDM } from '../../../shared/core'
+import { formatDateDM, formatDateFull } from '../../../shared/core'
 
 const { t } = useI18n()
 
-const props = defineProps<{
+defineProps<{
   groups: YearGroup[]
   target: number
 }>()
@@ -17,16 +17,20 @@ function scrollToCurrentYear(): void {
   if (!listRef.value) return
   const el = listRef.value.querySelector('[data-current-year="true"]')
   if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' })
   }
 }
 
-watch(
-  () => props.groups,
-  () => nextTick(scrollToCurrentYear),
-)
-
 onMounted(() => nextTick(scrollToCurrentYear))
+
+async function copyDate(date: Date): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(formatDateFull(date))
+  } catch {
+    // silently ignore single-date copy errors
+  }
+}
 </script>
 
 <template>
@@ -34,7 +38,7 @@ onMounted(() => nextTick(scrollToCurrentYear))
     ref="listRef"
     class="date-list"
     role="list"
-    :aria-label="t('dates.today')"
+    :aria-label="t('dates.listLabel')"
   >
     <div
       v-for="group in groups"
@@ -42,7 +46,7 @@ onMounted(() => nextTick(scrollToCurrentYear))
       class="date-group"
       :data-current-year="group.isCurrentYear"
       role="group"
-      :aria-label="String(group.year)"
+      :aria-label="t('dates.yearLabel', { year: group.year })"
     >
       <div
         class="year-heading"
@@ -53,13 +57,18 @@ onMounted(() => nextTick(scrollToCurrentYear))
         </template>{{ group.year }}
       </div>
       <div class="chip-row">
-        <span
+        <button
           v-for="item in group.dates"
           :key="item.date.getTime()"
+          type="button"
           class="date-chip mono"
           :class="{ today: item.isToday }"
           :aria-current="item.isToday ? 'date' : undefined"
-        >{{ formatDateDM(item.date) }}</span>
+          :title="formatDateFull(item.date)"
+          @click="copyDate(item.date)"
+        >
+          {{ formatDateDM(item.date) }}
+        </button>
       </div>
     </div>
     <div
@@ -142,9 +151,14 @@ onMounted(() => nextTick(scrollToCurrentYear))
   padding: 3px 8px;
   font-size: 13px;
   border-radius: var(--radius-sm);
-  cursor: default;
+  cursor: pointer;
   transition: background-color var(--transition-fast);
   border: 1px solid transparent;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .date-chip:hover {

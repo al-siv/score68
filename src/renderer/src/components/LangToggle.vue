@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 defineProps<{
   locale: string
 }>()
@@ -10,7 +14,10 @@ const emit = defineEmits<{
 
 <template>
   <button
+    type="button"
     class="lang-toggle"
+    :title="locale === 'en' ? t('lang.switchToRu') : t('lang.switchToEn')"
+    :aria-label="locale === 'en' ? t('lang.switchToRu') : t('lang.switchToEn')"
     @click="emit('toggle')"
   >
     {{ locale === 'en' ? 'EN' : 'РУ' }}

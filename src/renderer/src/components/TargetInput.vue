@@ -14,12 +14,15 @@ const emit = defineEmits<{
 }>()
 
 const inputValue = ref(String(props.modelValue))
+const isInvalid = ref(false)
 const errorFlash = ref(false)
+let errorTimer: ReturnType<typeof setTimeout> | undefined
 
 watch(
   () => props.modelValue,
   (val) => {
     inputValue.value = String(val)
+    isInvalid.value = false
   },
 )
 
@@ -28,31 +31,41 @@ function handleInput(e: Event): void {
   inputValue.value = el.value
 }
 
+function showError(): void {
+  isInvalid.value = true
+  errorFlash.value = true
+  clearTimeout(errorTimer)
+  errorTimer = setTimeout(() => {
+    errorFlash.value = false
+  }, 200)
+}
+
 function commitValue(): void {
   const raw = inputValue.value.trim()
 
   if (raw === '') {
-    errorFlash.value = true
-    setTimeout(() => {
-      errorFlash.value = false
-    }, 200)
+    showError()
     inputValue.value = String(props.modelValue)
-    emit('reset')
     return
   }
 
   const parsed = Number(raw)
 
-  if (!Number.isFinite(parsed) || !Number.isInteger(parsed) || parsed < 0 || parsed > 99) {
-    errorFlash.value = true
-    setTimeout(() => {
-      errorFlash.value = false
-    }, 200)
+  if (!Number.isFinite(parsed) || !Number.isInteger(parsed)) {
+    showError()
     inputValue.value = String(props.modelValue)
-    emit('reset')
     return
   }
 
+  if (parsed < 0 || parsed > 99) {
+    showError()
+    const clamped = Math.max(0, Math.min(99, parsed))
+    inputValue.value = String(clamped)
+    emit('update:modelValue', clamped)
+    return
+  }
+
+  isInvalid.value = false
   emit('update:modelValue', parsed)
 }
 
@@ -65,11 +78,14 @@ function handleKeydown(e: KeyboardEvent): void {
 
 <template>
   <input
+    id="target-input"
     type="number"
     class="target-input"
     :class="{ 'error-flash': errorFlash }"
     :value="inputValue"
     :aria-label="t('target.ariaLabel')"
+    :aria-invalid="isInvalid"
+    aria-describedby="target-error"
     min="0"
     max="99"
     inputmode="numeric"
@@ -77,6 +93,11 @@ function handleKeydown(e: KeyboardEvent): void {
     @blur="commitValue"
     @keydown="handleKeydown"
   >
+  <span
+    id="target-error"
+    class="visually-hidden"
+    aria-live="polite"
+  >{{ isInvalid ? t('target.error') : '' }}</span>
 </template>
 
 <style scoped>
@@ -109,6 +130,18 @@ function handleKeydown(e: KeyboardEvent): void {
 .target-input.error-flash {
   border-color: var(--color-error);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-error) 20%, transparent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (max-width: 479px) {

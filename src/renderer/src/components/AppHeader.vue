@@ -23,11 +23,14 @@ const emit = defineEmits<{
 <template>
   <header class="app-header">
     <span class="app-title">{{ t('app.title') }}</span>
-    <TargetInput
-      :model-value="target"
-      @update:model-value="emit('update:target', $event)"
-      @reset="emit('reset-target')"
-    />
+    <div class="target-wrap">
+      <span class="target-label">{{ t('target.label') }}</span>
+      <TargetInput
+        :model-value="target"
+        @update:model-value="emit('update:target', $event)"
+        @reset="emit('reset-target')"
+      />
+    </div>
     <div class="header-controls">
       <LangToggle
         :locale="locale"
@@ -63,6 +66,21 @@ const emit = defineEmits<{
   letter-spacing: -0.01em;
 }
 
+.target-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.target-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
 .header-controls {
   display: flex;
   align-items: center;
@@ -73,6 +91,10 @@ const emit = defineEmits<{
   .app-header {
     padding: 0 var(--sp-3);
     height: 48px;
+  }
+
+  .target-label {
+    display: none;
   }
 }
 </style>

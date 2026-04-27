@@ -14,6 +14,7 @@ const emit = defineEmits<{
 
 <template>
   <button
+    type="button"
     class="theme-toggle"
     :title="theme === 'dark' ? t('theme.light') : t('theme.dark')"
     :aria-label="theme === 'dark' ? t('theme.light') : t('theme.dark')"

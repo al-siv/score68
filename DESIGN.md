@@ -8,9 +8,8 @@ Minimalist, data-focused tool. No chrome, no distractions — the dates are the
 hero. Inspired by native system utilities (Calculator, Calendar). Every pixel
 earns its place.
 
-**Cross-platform by design**: single Vue 3 renderer that works identically in
-Electron (desktop) and Capacitor (mobile). Platform detection is CSS-only; no
-component forks.
+**Desktop-first**: single Vue 3 renderer running inside Electron. Responsive
+adaptations are CSS-only via media queries; no component forks.
 
 ### 1.2 Color Palette
 
@@ -97,17 +96,14 @@ Base unit: **4px**.
 
 ## 2. Platform Targets
 
-| Platform   | Runtime      | Window / View                        | Input       |
-| ---------- | ------------ | ------------------------------------ | ----------- |
-| macOS      | Electron     | Native window, hidden title bar      | Mouse + KB  |
-| Windows    | Electron     | Native window                        | Mouse + KB  |
-| Linux      | Electron     | Native window                        | Mouse + KB  |
-| iOS        | Capacitor    | Full-screen WKWebView                | Touch       |
-| Android    | Capacitor    | Full-screen WebView                  | Touch       |
+| Platform | Runtime  | Window / View                 | Input      |
+| -------- | -------- | ----------------------------- | ---------- |
+| macOS    | Electron | Native window, hidden title bar | Mouse + KB |
+| Windows  | Electron | Native window                 | Mouse + KB |
+| Linux    | Electron | Native window                 | Mouse + KB |
 
-**One renderer, two shells.** The Vue app is platform-agnostic; Electron and
-Capacitor are thin wrappers. Platform-specific CSS via media queries and
-Capacitor's CSS custom properties (`--ion-*` overrides).
+**One renderer, one shell.** The Vue app is platform-agnostic; Electron is a
+thin wrapper. Platform-specific CSS via media queries only.
 
 ---
 
@@ -242,20 +238,21 @@ Capacitor's WebView.
 
 ### 6.1 AppHeader
 
-Top bar, full width, fixed. Contains: app name, target input, toggles.
+Top bar, full width, fixed. Contains: app name, target label + input, toggles.
 
 ```
-Desktop:  │  score68     [__25__]     🌐 EN    🌙  │
-Mobile:   │  score68  [25]  🌐 🌙                   │
+Desktop:  │  score68  Target [__25__]     🌐 EN    🌙  │
+Mobile:   │  score68  [25]  🌐 🌙                         │
 ```
 
 | Property       | Desktop (≥ 480px)         | Mobile (< 480px)               |
 | -------------- | ------------------------- | ------------------------------- |
-| Height         | 48px                      | 48px                            |
+| Height         | 52px                      | 48px                            |
 | Padding        | `0 --sp-4`                | `0 --sp-3`                     |
 | App name       | Visible, left             | Visible, left, no extra space  |
-| Target input   | Centered, 60px wide       | Right of name, 48px wide       |
-| Toggles        | Right side, with labels   | Far right, icon-only           |
+| Target label   | Visible, small caps, dim  | Hidden                         |
+| Target input   | Centered, 64px wide       | Right of name, 50px wide       |
+| Toggles        | Right side, icon-only     | Far right, icon-only           |
 
 - Background: `--color-surface`
 - Border-bottom: 1px solid `--color-border`
@@ -267,11 +264,13 @@ Embedded in AppHeader. Compact numeric input.
 
 - `<input type="number" min="0" max="99" inputmode="numeric">`
   - `inputmode="numeric"` — mobile shows numeric keypad
-- Desktop width: 60px; mobile width: 48px; text-align center
+- Desktop width: 64px; mobile width: 50px; text-align center
 - Border: 1px solid `--color-border`; focus: 2px solid `--color-accent`
 - Invalid flash: 200ms `--color-error` border, then revert
 - On change → recomputes dates + saves to localStorage
-- On invalid (empty, <0, >99): reverts to `numerologySum(today)`
+- On out of range (`<0` or `>99`): clamps to `0..99`
+- On empty or non-numeric: reverts to last valid value
+- `aria-invalid` toggled during error; `aria-describedby` points to error message
 - **Mobile**: font-size 16px to prevent iOS zoom on focus
 
 ### 6.3 InfoPanel
@@ -279,16 +278,16 @@ Embedded in AppHeader. Compact numeric input.
 Compact info strip below header. Does not scroll.
 
 ```
-Desktop:  (D + M + YY₁ + YY₂) % 100  •  Today: 25  •  1826–2076
-Mobile:   Today: 25  •  1826–2076
+Desktop:  Target: 25  •  Today: 25  •  1826–2076  •  (D + M + YY₁ + YY₂) % 100
+Mobile:   Target: 25  •  Today: 25  •  1826–2076
 ```
 
-| Property       | Desktop                   | Mobile                     |
-| -------------- | ------------------------- | -------------------------- |
-| Segments       | Formula + Today + Range   | Today + Range (no formula) |
-| Font size      | 12px                      | 11px                       |
-| Padding        | `--sp-2 --sp-4`           | `--sp-1 --sp-3`           |
-| Height         | auto (~28px)              | auto (~24px)              |
+| Property       | Desktop                            | Mobile                     |
+| -------------- | ---------------------------------- | -------------------------- |
+| Segments       | Target + Today + Range + Formula   | Target + Today + Range     |
+| Font size      | 12px                               | 11px                       |
+| Padding        | `--sp-2 --sp-4`                    | `--sp-1 --sp-3`           |
+| Height         | auto (~28px)                       | auto (~24px)              |
 
 - Background: `--color-surface`
 - Color: `--color-text-dim`
@@ -340,7 +339,8 @@ Each year is a collapsible-like group:
 
 #### DateChip (sub-component)
 
-Individual date within a group:
+Individual date within a group. Clicking a chip copies the full date
+(`DD.MM.YYYY`) to the clipboard.
 
 ```
 ┌──────┐
@@ -354,18 +354,20 @@ Individual date within a group:
 
 | Property      | Desktop                          | Mobile                           |
 | ------------- | -------------------------------- | -------------------------------- |
-| Padding       | `--sp-1 --sp-2`                  | `--sp-2 --sp-2` (larger target)  |
+| Padding       | 3px 8px                          | `--sp-2 --sp-2` (larger target)  |
 | Min size      | none                             | 44×44px (touch target minimum)   |
 | Font          | monospace, 13px                  | monospace, 13px                  |
 | Border-radius | `--radius-sm`                    | `--radius-sm`                    |
+| Cursor        | pointer                          | pointer                          |
 | Hover         | `--color-hover` background       | n/a (touch)                      |
-| Active (tap)  | n/a                              | `--color-hover` background       |
-| Today         | `--color-accent-bg` + left border| Same, + bold                     |
+| Active (tap)  | `--color-hover` background       | `--color-hover` background       |
+| Today         | `--color-accent-bg` + full border| Same, + bold                     |
+| Title         | Full date `DD.MM.YYYY`           | Full date `DD.MM.YYYY`           |
 
 - **Touch target**: All chips have minimum 44×44px tap area on mobile
   (`min-height: 44px; min-width: 44px` via `@media (hover: none)`)
-- **Today's date**: `--color-accent-bg` background, 3px left border
-  `--color-accent`, font-weight 600
+- **Today's date**: `--color-accent-bg` background, 1px border `--color-accent`,
+  font-weight 600
 
 ### 6.5 ActionBar
 
@@ -437,11 +439,11 @@ App mounts
 ```
 User types new target in TargetInput
   → Validate: 0–99 integer
-  → If invalid: revert + red border flash (200ms)
+  → If empty or non-numeric: revert to last valid value + red border flash (200ms)
+  → If out of range: clamp to 0..99 + red border flash (200ms)
   → If valid:
     → Recompute matching dates (reactive)
     → DateList re-renders
-    → Auto-scroll to today's year group
     → Save to localStorage['score68-target']
     → Update InfoPanel
 ```
@@ -451,11 +453,13 @@ User types new target in TargetInput
 ```
 User taps [Copy]
   → Format all matching dates as text (see § 12)
-  → Clipboard API:
-      Desktop: navigator.clipboard.writeText()
-      Mobile:  Capacitor Clipboard plugin (fallback to navigator.clipboard)
-  → Button → "Copied!" / "Скопировано!"
-  → After 1.5s → revert
+  → Clipboard API: navigator.clipboard.writeText()
+  → On success:
+    → Button → "Copied!" / "Скопировано!"
+    → After 1.5s → revert
+  → On failure:
+    → Button → "Copy failed" / "Не удалось скопировать"
+    → After 2s → revert
 ```
 
 ### 7.4 Toggle Theme
@@ -484,9 +488,10 @@ Tap lang toggle
 
 ### 8.1 Auto-Scroll to Today
 
-On initial load and on target change:
+On initial load only:
 1. Find `<DateGroup>` whose year === `today.getFullYear()`
-2. `element.scrollIntoView({ behavior: 'smooth', block: 'center' })`
+2. `element.scrollIntoView({ behavior: 'auto', block: 'center' })`
+   (uses `smooth` only when `prefers-reduced-motion` is not active)
 3. Today's `<DateChip>` gets accent highlight
 
 ### 8.2 Scroll Performance
@@ -506,7 +511,7 @@ All rendered (no virtual scroll needed).
 
 ---
 
-## 9. Safe Area & Viewport (Mobile)
+## 9. Safe Area & Viewport
 
 ```css
 html {
@@ -520,12 +525,6 @@ body {
   min-height: 100dvh;
 }
 
-/* Capacitor injects --ion-safe-area-* or we use env() */
-#app {
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: 0;
-}
-
 .action-bar {
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
@@ -536,7 +535,7 @@ Viewport meta in `index.html`:
 ```html
 <meta
   name="viewport"
-  content="viewport-fit=cover, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  content="width=device-width, initial-scale=1.0"
 />
 ```
 
@@ -563,13 +562,15 @@ All animations CSS-only, no JS animation libraries.
 | Feature              | Implementation                                    |
 | -------------------- | ------------------------------------------------- |
 | Keyboard nav         | Tab order: TargetInput → LangToggle → ThemeToggle → DateList → CopyBtn |
-| TargetInput          | `aria-label` via i18n key                         |
-| DateList             | `role="list"`, `aria-label` via i18n              |
-| DateGroup            | `role="group"`, `aria-label` "Year {N}"           |
+| TargetInput          | `aria-label`, `aria-invalid`, `aria-describedby` pointing to error message |
+| DateList             | `role="list"`, `aria-label` via `dates.listLabel` |
+| DateGroup            | `role="group"`, `aria-label` via `dates.yearLabel`|
 | Today highlight      | `aria-current="date"`                             |
-| Copy button          | `aria-label` via i18n                             |
+| Copy button          | `aria-label`, `aria-live="polite"` status text    |
+| LangToggle           | `aria-label` + `title` describing switch action   |
 | Focus visible        | 2px solid `--color-accent` outline                |
 | Touch targets        | Min 44×44px on `@media (hover: none)`             |
+| Reduced motion       | `prefers-reduced-motion` respected for scroll     |
 
 ---
 
@@ -580,19 +581,26 @@ All animations CSS-only, no JS animation libraries.
 | `app.title`             | score68                         | score68                           |
 | `target.label`          | Target                          | Цель                              |
 | `target.ariaLabel`      | Target numerology sum           | Целевая сумма нумерологии         |
+| `target.error`          | Enter an integer from 0 to 99   | Введите целое число от 0 до 99    |
 | `info.formula`          | (D + M + YY₁ + YY₂) % 100     | (Д + М + YY₁ + YY₂) % 100       |
 | `info.today`            | Today                           | Сегодня                           |
 | `info.range`            | Range                           | Диапазон                          |
-| `dates.year`            | Year {year}                     | {year} год                        |
+| `info.target`           | Target                          | Цель                              |
+| `dates.year`            | {year}                          | {year}                            |
+| `dates.yearLabel`       | Year {year}                     | {year} год                        |
 | `dates.today`           | ★ Today                         | ★ Сегодня                         |
+| `dates.listLabel`       | Matching dates                  | Подходящие даты                   |
 | `action.copy`           | Copy dates                      | Копировать даты                   |
 | `action.copyShort`      | Copy                            | Копировать                        |
 | `action.copied`         | Copied!                         | Скопировано!                      |
+| `action.copyFailed`     | Copy failed                     | Не удалось скопировать            |
 | `action.total`          | Total: {count}                  | Всего: {count}                    |
 | `theme.light`           | Light                           | Светлая                           |
 | `theme.dark`            | Dark                            | Тёмная                            |
 | `lang.en`               | EN                              | EN                                |
 | `lang.ru`               | РУ                              | РУ                                |
+| `lang.switchToEn`       | Switch to English               | Switch to English                 |
+| `lang.switchToRu`       | Switch to Russian               | Переключить на русский            |
 | `empty.title`           | No matching dates               | Нет подходящих дат                |
 | `empty.message`         | No dates match target {target}  | Нет дат с суммой {target}         |
 
@@ -602,13 +610,12 @@ All animations CSS-only, no JS animation libraries.
 
 | State                 | Behavior                                               |
 | --------------------- | ------------------------------------------------------ |
-| No matching dates     | DateList shows centered empty state with icon + message |
-| Target input cleared  | Revert to `numerologySum(today)` after blur           |
-| Target > 99           | Clamp to 99 on input                                   |
-| Target < 0            | Clamp to 0 on input                                    |
+| No matching dates     | DateList shows centered empty state with icon + message (rare) |
+| Target input cleared  | Revert to last valid value after blur                  |
+| Target > 99           | Clamp to 99 on blur                                    |
+| Target < 0            | Clamp to 0 on blur                                     |
 | localStorage fail     | Use defaults (no persistence)                          |
-| Clipboard API fail    | Fallback: textarea + select (mobile)                   |
-| Offline (Capacitor)   | No effect — all computation is local                   |
+| Clipboard API fail    | Show error state on copy button for 2s                 |
 
 ### Empty State
 
@@ -645,48 +652,9 @@ Plain text, UTF-8, year-per-line, space-separated dates, trailing summary.
 ## 15. Platform Detection
 
 ```typescript
-const isMobile = (): boolean =>
-  typeof window !== 'undefined' && 'Capacitor' in window;
-
 const isTouch = (): boolean =>
   typeof window !== 'undefined' && matchMedia('(hover: none)').matches;
 ```
 
-Used sparingly — most adaptations are CSS-only via media queries and
-`@media (hover: none)`. JS detection only for clipboard fallback.
-
----
-
-## 16. Capacitor Integration (Ready)
-
-The project includes Capacitor configuration but does **not** require it for
-desktop builds. It's an optional mobile build target.
-
-### Required packages (optional, for mobile builds only)
-
-| Package              | Version | Purpose              |
-| -------------------- | ------- | -------------------- |
-| `@capacitor/core`    | 7.x     | Core runtime         |
-| `@capacitor/cli`     | 7.x     | Build tooling        |
-| `@capacitor/clipboard` | 7.x   | Clipboard fallback   |
-| `@capacitor/preferences` | 7.x | Storage fallback     |
-
-### capacitor.config.ts (scaffold)
-
-```typescript
-import type { CapacitorConfig } from '@capacitor/cli';
-
-const config: CapacitorConfig = {
-  appId: 'com.score68.app',
-  appName: 'score68',
-  webDir: 'out/renderer',
-  server: {
-    androidScheme: 'https',
-  },
-};
-
-export default config;
-```
-
-Mobile builds are triggered separately (`npx cap sync && npx cap open ios`),
-not part of the default `npm run build` workflow.
+Used sparingly — all adaptations are CSS-only via media queries and
+`@media (hover: none)`.

@@ -5,20 +5,25 @@ export const en = {
   target: {
     label: 'Target',
     ariaLabel: 'Target numerology sum',
+    error: 'Enter an integer from 0 to 99',
   },
   info: {
     formula: '(D + M + YY\u2081 + YY\u2082) % 100',
     today: 'Today',
     range: 'Range',
+    target: 'Target',
   },
   dates: {
     year: '{year}',
+    yearLabel: 'Year {year}',
     today: '\u2605 Today',
+    listLabel: 'Matching dates',
   },
   action: {
     copy: 'Copy dates',
     copyShort: 'Copy',
     copied: 'Copied!',
+    copyFailed: 'Copy failed',
     total: 'Total: {count}',
   },
   theme: {
@@ -28,6 +33,8 @@ export const en = {
   lang: {
     en: 'EN',
     ru: 'RU',
+    switchToEn: 'Switch to English',
+    switchToRu: 'Switch to Russian',
   },
   empty: {
     title: 'No matching dates',

@@ -11,19 +11,26 @@ const props = defineProps<{
 }>()
 
 const copied = ref(false)
+const copyError = ref(false)
 let timer: ReturnType<typeof setTimeout> | undefined
 
 async function copyToClipboard(): Promise<void> {
-  if (copied.value) return
+  if (copied.value || copyError.value) return
   try {
     await navigator.clipboard.writeText(props.clipboardText)
     copied.value = true
+    copyError.value = false
     clearTimeout(timer)
     timer = setTimeout(() => {
       copied.value = false
     }, 1500)
   } catch {
     copied.value = false
+    copyError.value = true
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      copyError.value = false
+    }, 2000)
   }
 }
 </script>
@@ -31,13 +38,14 @@ async function copyToClipboard(): Promise<void> {
 <template>
   <div class="action-bar">
     <button
+      type="button"
       class="copy-btn"
-      :class="{ copied }"
+      :class="{ copied, error: copyError }"
       :aria-label="t('action.copy')"
       @click="copyToClipboard"
     >
-      <span class="copy-icon">{{ copied ? '&#10003;' : '&#128203;' }}</span>
-      {{ copied ? t('action.copied') : isMobile ? t('action.copyShort') : t('action.copy') }}
+      <span class="copy-icon">{{ copied ? '&#10003;' : copyError ? '&#10007;' : '&#128203;' }}</span>
+      <span aria-live="polite">{{ copied ? t('action.copied') : copyError ? t('action.copyFailed') : isMobile ? t('action.copyShort') : t('action.copy') }}</span>
     </button>
     <span class="total-count">{{ isMobile ? totalCount : t('action.total', { count: totalCount }) }}</span>
   </div>
@@ -83,6 +91,10 @@ async function copyToClipboard(): Promise<void> {
 
 .copy-btn.copied {
   background: var(--color-accent);
+}
+
+.copy-btn.error {
+  background: var(--color-error);
 }
 
 .copy-icon {

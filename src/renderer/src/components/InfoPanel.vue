@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 defineProps<{
+  target: number
   todayValue: number
   rangeLabel: string
   isMobile: boolean
@@ -12,15 +13,19 @@ defineProps<{
 
 <template>
   <div class="info-panel">
-    <template v-if="!isMobile">
-      <span class="info-segment mono">{{ t('info.formula') }}</span>
-      <span class="info-dot">&bull;</span>
-    </template>
+    <span class="info-segment">
+      {{ t('info.target') }}: <strong>{{ target }}</strong>
+    </span>
+    <span class="info-dot">&bull;</span>
     <span class="info-segment">
       {{ t('info.today') }}: <strong>{{ todayValue }}</strong>
     </span>
     <span class="info-dot">&bull;</span>
     <span class="info-segment">{{ rangeLabel }}</span>
+    <template v-if="!isMobile">
+      <span class="info-dot">&bull;</span>
+      <span class="info-segment mono">{{ t('info.formula') }}</span>
+    </template>
   </div>
 </template>
 
