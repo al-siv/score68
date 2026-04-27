@@ -2,51 +2,47 @@
 
 ## Project overview
 
-Small Node.js CLI utility. Lists dates (2022–2026) whose digit-group sum equals a target (default 68).
+Electron desktop app that enumerates dates whose numerological sum equals a target value.
 
-- **Runtime**: Node.js ≥ 22, ES modules (`"type": "module"`)
-- **Stack**: vanilla JS, no framework
-- **Lint**: ESLint 9 flat config (`npm run lint`)
-- **Format**: Prettier (`npm run format`)
-- **Test**: Node.js built-in test runner `node:test` + fast-check property tests (`npm test`)
-- **CI shortcut**: `npm run verify` (lint + test)
+- **Runtime**: Electron 41 + Node.js ≥ 22
+- **Language**: TypeScript 6.0 (strict)
+- **UI**: Vue 3 (Composition API, SFC) + Vite 7.3
+- **Build**: electron-vite 5.0
+- **Test**: Vitest 4.1 + fast-check 4.7 (80 tests)
+- **Contracts**: Zod 4.3 runtime validation
+- **i18n**: vue-i18n 11.4 (EN + RU)
+- **Lint**: ESLint 10 flat config + typescript-eslint + eslint-plugin-vue
+- **CI shortcut**: `npm run verify` (lint + typecheck + test)
 
 ## Architecture
 
 ```
-cli.js            — Thin CLI shell (only file with side-effects)
-src/
-  dates68.js      — Core date-scoring computation (pure)
-  args.js         — CLI argument parser (pure, returns discriminated union)
-  env.js          — Environment variable resolver (pure)
-test/
-  dates68.test.js — Unit: core computation + formatting
-  args.test.js    — Unit: argument parser
-  cli.test.js     — Integration: full CLI invocations
-  env.test.js     — Integration: env variable overrides
-  property.test.js— Property-based: numerology formula invariants
+src/main/         Electron main process (window lifecycle)
+src/preload/      Context bridge (minimal)
+src/renderer/     Vue 3 app (Vite renderer)
+src/shared/       Pure core logic (no Electron/Vue deps)
+tests/            Vitest unit + property + scenario tests
 ```
 
 ### Design principles
 
-- **Pure boundary**: All `src/` modules are pure functions. Side-effects live only in `cli.js`.
-- **Discriminated unions**: `parseArgs()` returns `{ ok: true, config }` or `{ ok: false, error }`.
-- **ENV resolver**: `resolveEnv(env, config)` takes an env object (not `process.env` directly) — testable, no hidden state.
+- **Pure core**: All `src/shared/` code is pure functions — no Electron APIs, DOM, or side-effects.
+- **Contract-driven**: Zod schemas validate all external inputs; types derived from schemas.
+- **Docs-in-code**: TSDoc with `@example`, `@since`, `@throws` on all exports.
 
 ## Quality gates
 
-1. `npm run lint` — ESLint clean on touched files
-2. `npm test` — all test suites pass (36 tests across 8 suites)
-3. `npm run verify` — combined lint + test (CI equivalent)
+1. `npm run lint` — ESLint clean
+2. `npm run typecheck` — TypeScript clean
+3. `npm run test` — all 80 tests pass
+4. `npm run verify` — combined lint + typecheck + test
 
 ## Agent rules
 
 - Default to action over speculation. Read code before claiming root cause.
-- Keep changes focused; don't over-engineer a small utility.
+- Keep changes focused; don't over-engineer.
 - Merge to main only with explicit user approval.
 - No destructive or irreversible operations without confirmation.
-- Prefer the smallest sufficient test layer (unit > integration > E2E).
+- All `src/shared/` code must remain pure (no `process`, `console`, `fs`, or DOM).
 - When modifying behavior, update relevant tests in the same change.
-- Process rigor is proportional to change size — skip ceremony for tiny fixes.
-- All `src/` code must remain pure (no `process`, `console`, or `fs` calls).
-- `cli.js` is the only impure boundary — keep it thin.
+- Follow existing patterns in the codebase.

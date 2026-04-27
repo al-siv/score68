@@ -19,4 +19,27 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm ci
-      - run: npm run verify
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test
+
+  build:
+    runs-on: ${{ matrix.os }}
+    needs: verify
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        if: runner.os != 'Linux'
+      - name: Build (Linux)
+        run: npm run build
+        if: runner.os == 'Linux'
+        env:
+          DISPLAY: ':99.0'

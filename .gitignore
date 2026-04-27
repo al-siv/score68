@@ -1,5 +1,10 @@
-# Ignore node modules
 node_modules/
-
-# DS Store files
+out/
+dist/
 .DS_Store
+*.local
+*.log
+*.tsbuildinfo
+build/
+!build/entitlements.mac.plist
+analysis/

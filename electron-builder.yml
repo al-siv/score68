@@ -1,0 +1,37 @@
+appId: com.score68.app
+productName: score68
+directories:
+  buildResources: build
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!tests/*'
+  - '!electron.vite.config.*'
+  - '!vitest.config.*'
+  - '!eslint.config.*'
+  - '!tsconfig*.json'
+  - '!{.eslintignore,.prettierrc.json,AGENTS.md,SKILLS.md,DESIGN.md,README.md,CHANGELOG.md,CONTRIBUTING.md}'
+win:
+  executableName: score68
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+mac:
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  notarize: false
+  identity: null
+dmg:
+  artifactName: ${name}-${version}.${ext}
+linux:
+  target:
+    - AppImage
+    - snap
+    - deb
+  maintainer: score68
+  category: Utility
+appImage:
+  artifactName: ${name}-${version}.${ext}
+npmRebuild: false

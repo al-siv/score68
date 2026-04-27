@@ -1,195 +1,129 @@
 # score68
 
-![CI](https://github.com/al-siv/score68/actions/workflows/ci.yml/badge.svg)
-
-Date numerology enumerator: list dates whose `(Day + Month + YY(first) + YY(last)) % 100` equals a target.
+Electron desktop app that enumerates dates whose numerological sum `(Day + Month + ⌊Year/100⌋ + Year%100) % 100` equals a user-specified target value.
 
 ---
 
 ## Quick Start
 
-Clone and run (private package, local usage):
-
 ```
 git clone https://github.com/al-siv/score68.git
 cd score68
 npm install
-npm run dates:68
-```
-
-Sample output excerpt:
-
-```
-Utility:  score68
-Version:  <version>
-Target:   68
-Range:    01.01.2022–31.12.2026
-2022: 25.01 24.02 23.03 ... 14.12
-...
-Total dates matching target '68': 60
+npm run dev
 ```
 
 ## Features
 
-- Fixed default range: 2022-01-01..2026-12-31 (UTC)
-- Custom target positional argument
-- Explicit range flag (`--range` / `-r`)
-- Dynamic last N years (`--years` / `-y`)
-- Environment variable overrides (lower precedence than CLI)
-- Pure computation module and thin CLI shell
-- Property-based invariant test coverage
+- Default target: numerology sum of today's date
+- Scrollable date range: today − 200 years … today + 50 years
+- Vue 3 GUI with minimalist design
+- Russian / English interface (toggle)
+- Light / Dark theme (toggle, persists)
+- Today's date highlighted, auto-scroll to current year
+- Copy all matching dates to clipboard
+- Settings persistence via localStorage
+- Cross-platform: macOS, Windows, Linux (Electron); mobile-ready (Capacitor)
 
 ## Formula
 
-Raw sum:
-
 ```
-Day + Month + (first two digits of year) + (last two digits of year)
+numerologySum(date) = (D + M + ⌊Y/100⌋ + Y%100) % 100
 ```
 
-Effective value: `raw % 100`.
+| Component  | Meaning                  | Example (2026-04-25) |
+| ---------- | ------------------------ | -------------------- |
+| D          | Day of month             | 25                   |
+| M          | Month                    | 4                    |
+| ⌊Y/100⌋   | First two digits of year | 20                   |
+| Y%100      | Last two digits of year  | 26                   |
 
-## Installation
+Result: `(25 + 4 + 20 + 26) % 100 = 75`
 
-Current state: private (not published to npm). Use clone method above. Planned publish path (if enabled later):
+## Commands
 
-```
-npm install score68
-npx score68
-```
+| Task              | Command              |
+| ----------------- | -------------------- |
+| Install deps      | `npm install`        |
+| Dev (Electron)    | `npm run dev`        |
+| Build             | `npm run build`      |
+| Test              | `npm run test`       |
+| Lint              | `npm run lint`       |
+| Format            | `npm run format`     |
+| Verify            | `npm run verify`     |
+| Package installer | `npm run package`    |
 
-## CLI Usage
+## Tech Stack
 
-### Commands / Examples
-
-| Purpose              | Command                                        |
-| -------------------- | ---------------------------------------------- |
-| Default target 68    | `npm run dates:68`                             |
-| Custom target 69     | `node cli.js 69`                               |
-| Explicit range       | `node cli.js 68 --range 2000-01-01:2025-12-31` |
-| Explicit range (sh.) | `node cli.js 68 -r 2000-01-01:2025-12-31`      |
-| Last 10 years        | `node cli.js 68 -y 10`                         |
-| Help                 | `node cli.js --help`                           |
-
-### Flags
-
-| Flag      | Alias | Value                   | Description                                      |
-| --------- | ----- | ----------------------- | ------------------------------------------------ |
-| `--range` | `-r`  | `YYYY-MM-DD:YYYY-MM-DD` | Inclusive explicit date span                     |
-| `--years` | `-y`  | `N`                     | Last N full calendar years (ending current year) |
-| `--help`  | `-h`  | –                       | Show help                                        |
-
-Mutual exclusion: `--range` and `--years` cannot be combined.
-
-### Environment Variables
-
-Lower precedence than CLI arguments.
-
-| Variable         | Example                 | Meaning                                  |
-| ---------------- | ----------------------- | ---------------------------------------- |
-| `SCORE68_TARGET` | `72`                    | Numeric target (non-negative integer)    |
-| `SCORE68_RANGE`  | `2024-01-01:2024-12-31` | Explicit range (overrides years)         |
-| `SCORE68_YEARS`  | `5`                     | Last N years (ignored if range provided) |
-
-If both `SCORE68_RANGE` and `SCORE68_YEARS` are set, the range takes priority.
-
-### Exit / Error Behavior
-
-Process exits with code 1 on invalid input. Example:
-
-```
-$ node cli.js --years 0
-years must be positive integer
-```
-
-## Error Codes (parser)
-
-| Code                   | Condition                                       |
-| ---------------------- | ----------------------------------------------- |
-| `UNKNOWN_FLAG`         | Unrecognized flag (not negative number)         |
-| `INVALID_TARGET`       | Target positional not a non-negative integer    |
-| `RANGE_FORMAT`         | `--range` value not matching pattern            |
-| `RANGE_ORDER`          | Range start > end or invalid dates              |
-| `YEARS_VALUE`          | `--years` value missing or non-positive integer |
-| `CONFLICT_RANGE_YEARS` | Both range and years supplied                   |
-
-## Programmatic API
-
-Module: `src/dates68.js` (ESM). Example:
-
-```js
-import { listDatesWithSum, numerologySum } from './src/dates68.js';
-
-const matches = listDatesWithSum(); // default target (68) and default range
-const alt = listDatesWithSum(69); // alternate target
-console.log(matches.length);
-```
-
-Function contract:
-
-```
-listDatesWithSum(target = 68, startDate = START_DATE, endDate = END_DATE) -> Date[]
-```
-
-## Development
-
-| Task                  | Command          |
-| --------------------- | ---------------- |
-| Install deps          | `npm install`    |
-| Run all tests         | `npm test`       |
-| Lint                  | `npm run lint`   |
-| Format                | `npm run format` |
-| Verify (lint + tests) | `npm run verify` |
-
-Node version: ≥22 (LTS).
-
-Release process: see `docs/archive/BUILD_RELEASE-0.2.0.md`.
-
-## Changelog
-
-See `CHANGELOG.md` for version history.
-
-## Contributing
-
-See `CONTRIBUTING.md` for author & maintainer workflows (branch naming, verification, PR template usage, merge & tag steps).
+| Layer          | Technology                      | Version |
+| -------------- | ------------------------------- | ------- |
+| Runtime        | Electron                        | 41.3    |
+| Language       | TypeScript (strict)             | 6.0     |
+| UI Framework   | Vue 3 (Composition API, SFC)    | 3.5     |
+| Bundler        | Vite + electron-vite            | 7.3     |
+| Packaging      | electron-builder                | 26.8    |
+| Testing        | Vitest + fast-check             | 4.1     |
+| Contracts      | Zod                             | 4.3     |
+| i18n           | vue-i18n                        | 11.4    |
+| Linting        | ESLint 10 (flat config)         | 10.2    |
 
 ## Architecture
 
 ```
-cli.js              Thin impure shell (I/O only)
-src/
-  dates68.js        Core date-scoring computation (pure)
-  args.js           CLI argument parser (pure, discriminated union)
-  env.js            Environment variable resolver (pure, DI)
-test/
-  dates68.test.js   Unit: core computation + formatting
-  args.test.js      Unit: argument parser
-  cli.test.js       Integration: full CLI invocations
-  env.test.js       Integration: env variable overrides
-  property.test.js  Property-based: numerology formula invariants
+┌──────────────────────────────────────────────┐
+│  Electron Main (src/main/)                   │
+│  Window lifecycle, no menu bar               │
+├──────────────────────────────────────────────┤
+│  Preload (src/preload/)                      │
+│  Minimal contextBridge (extensibility only)  │
+├──────────────────────────────────────────────┤
+│  Renderer (src/renderer/) — Vue 3 + Vite    │
+│  UI components, i18n, theme, composables     │
+├──────────────────────────────────────────────┤
+│  Shared Core (src/shared/)                   │
+│  Pure numerology, Zod contracts, types       │
+│  ← imported by both main and renderer        │
+└──────────────────────────────────────────────┘
 ```
 
-Design: all `src/` modules are **pure functions** — no `process`, `console`, or `fs`. Side-effects live only in `cli.js`. Environment resolution uses dependency injection (`resolveEnv(env, config)`) for testability.
+All computation runs client-side using shared pure functions. No IPC needed.
 
-## LLM-Assisted Development
+## Project Structure
 
-This project includes GitHub Copilot integration files:
+```
+src/
+  main/index.ts              Electron main process
+  preload/index.ts           Context bridge
+  renderer/                  Vue 3 app
+    src/
+      App.vue                Root component
+      main.ts                App entry + i18n setup
+      components/            UI components
+      composables/           Reactive business logic
+      i18n/                  en.ts, ru.ts
+      assets/styles/         CSS tokens, themes
+  shared/                    Pure core (no Electron/Vue deps)
+    core/dates68.ts          Numerology computation
+    core/types.ts            TypeScript types
+    contracts/schemas.ts     Zod schemas
+tests/
+  unit/                      dates68, schemas, scenarios
+  property/                  fast-check invariants
+```
 
-| File | Purpose |
-|------|---------|
-| `.github/copilot-instructions.md` | Always-on project context |
-| `.github/instructions/quality-gates.instructions.md` | Auto-applied to `**/*.js` — validation rules |
-| `.github/instructions/code-style.instructions.md` | Auto-applied to `src/**` — coding conventions |
-| `.github/instructions/testing.instructions.md` | Auto-applied to `test/**` — test patterns |
-| `.github/prompts/add-feature.prompt.md` | Reusable prompt: add a feature |
-| `.github/prompts/investigate-bug.prompt.md` | Reusable prompt: diagnose a bug |
-| `.github/prompts/code-review.prompt.md` | Reusable prompt: code review |
+## Persistence
 
-## Non-goals
+| Key              | Default                  |
+| ---------------- | ------------------------ |
+| `score68-target` | `numerologySum(today)`   |
+| `score68-lang`   | System locale or `"en"`  |
+| `score68-theme`  | `"light"`                |
 
-- Time zone localization (uses UTC internally)
-- Alternative numerology formulas
-- Output formatting customization beyond provided flags
+## Development
+
+See `AGENTS.md` for detailed project context, conventions, and quality gates.
+See `DESIGN.md` for UI/UX specification.
+See `SKILLS.md` for development workflows.
 
 ## License
 
