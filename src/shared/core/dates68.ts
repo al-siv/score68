@@ -2,8 +2,6 @@
  * Core date-scoring logic — pure functions, no side-effects.
  *
  * Formula: `(D + M + ⌊Y/100⌋ + Y%100) % 100`
- *
- * @since 2.0.0
  */
 
 import type { DateRange, YearGroup, DatedResult } from './types'
@@ -21,7 +19,6 @@ export const YEARS_FORWARD = 50
  * @returns Integer in [0, 99]
  *
  * @example numerologySum(new Date(Date.UTC(2022, 0, 25))) // → 68
- * @since 2.0.0
  */
 export function numerologySum(date: Date): number {
   const day = date.getUTCDate()
@@ -36,7 +33,6 @@ export function numerologySum(date: Date): number {
  * @returns Integer in [0, 99]
  *
  * @example numerologySumOfToday()
- * @since 2.0.0
  */
 export function numerologySumOfToday(): number {
   return numerologySum(new Date())
@@ -48,7 +44,6 @@ export function numerologySumOfToday(): number {
  * @returns Inclusive date range with UTC midnight boundaries
  *
  * @example computeDefaultRange() // { start: Date(1826-04-25), end: Date(2076-04-25) }
- * @since 2.0.0
  */
 export function computeDefaultRange(): DateRange {
   const now = new Date()
@@ -70,7 +65,6 @@ export function computeDefaultRange(): DateRange {
  *
  * @example [...dateRange(new Date(Date.UTC(2026,0,1)), new Date(Date.UTC(2026,0,3)))]
  * // → [2026-01-01, 2026-01-02, 2026-01-03]
- * @since 2.0.0
  */
 export function* dateRange(start: Date, end: Date): Generator<Date> {
   const cur = new Date(start.getTime())
@@ -89,7 +83,6 @@ export function* dateRange(start: Date, end: Date): Generator<Date> {
  * @returns Array of matching UTC dates
  *
  * @example listDatesWithSum(68, new Date(Date.UTC(2022,0,1)), new Date(Date.UTC(2022,11,31)))
- * @since 2.0.0
  */
 export function listDatesWithSum(target: number, start: Date, end: Date): Date[] {
   const result: Date[] = []
@@ -107,9 +100,9 @@ export function listDatesWithSum(target: number, start: Date, end: Date): Date[]
  * @returns `true` when year, month, and day are equal
  *
  * @example isSameDay(new Date(Date.UTC(2026,3,25)), new Date(Date.UTC(2026,3,25))) // → true
- * @since 2.0.0
  */
 export function isSameDay(a: Date, b: Date): boolean {
+  if (isNaN(a.getTime()) || isNaN(b.getTime())) return false
   return (
     a.getUTCFullYear() === b.getUTCFullYear() &&
     a.getUTCMonth() === b.getUTCMonth() &&
@@ -124,7 +117,6 @@ export function isSameDay(a: Date, b: Date): boolean {
  * @returns Array of `YearGroup` objects sorted by year descending (newest first)
  *
  * @example groupByYear(dates)
- * @since 2.0.0
  */
 export function groupByYear(dates: Date[]): YearGroup[] {
   const today = new Date()
@@ -162,7 +154,6 @@ export function groupByYear(dates: Date[]): YearGroup[] {
  * @returns String in DD.MM format
  *
  * @example formatDateDM(new Date(Date.UTC(2026, 0, 25))) // → "25.01"
- * @since 2.0.0
  */
 export function formatDateDM(date: Date): string {
   const dd = String(date.getUTCDate()).padStart(2, '0')
@@ -177,7 +168,6 @@ export function formatDateDM(date: Date): string {
  * @returns String in DD.MM.YYYY format
  *
  * @example formatDateFull(new Date(Date.UTC(2026, 0, 25))) // → "25.01.2026"
- * @since 2.0.0
  */
 export function formatDateFull(date: Date): string {
   return `${formatDateDM(date)}.${date.getUTCFullYear()}`
@@ -193,7 +183,6 @@ export function formatDateFull(date: Date): string {
  * @returns Formatted plain-text string
  *
  * @example formatClipboardText(25, groups, range, 2847)
- * @since 2.0.0
  */
 export function formatClipboardText(
   target: number,

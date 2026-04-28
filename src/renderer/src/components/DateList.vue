@@ -27,8 +27,8 @@ onMounted(() => nextTick(scrollToCurrentYear))
 async function copyDate(date: Date): Promise<void> {
   try {
     await navigator.clipboard.writeText(formatDateFull(date))
-  } catch {
-    // silently ignore single-date copy errors
+  } catch (err) {
+    console.error('[clipboard] Failed to copy date:', err)
   }
 }
 </script>

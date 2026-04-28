@@ -10,7 +10,6 @@ export const en = {
   info: {
     formula: '(D + M + YY\u2081 + YY\u2082) % 100',
     today: 'Today',
-    range: 'Range',
     target: 'Target',
   },
   dates: {

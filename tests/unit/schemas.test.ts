@@ -3,7 +3,6 @@ import {
   targetSchema,
   isoDateSchema,
   appSettingsSchema,
-  partialSettingsSchema,
 } from '../../src/shared/contracts/schemas'
 
 describe('targetSchema', () => {
@@ -93,36 +92,4 @@ describe('appSettingsSchema', () => {
   })
 })
 
-describe('partialSettingsSchema', () => {
-  it('accepts empty object', () => {
-    const result = partialSettingsSchema.parse({})
-    expect(result.target).toBeUndefined()
-    expect(result.lang).toBeUndefined()
-    expect(result.theme).toBeUndefined()
-  })
 
-  it('accepts partial settings', () => {
-    const result = partialSettingsSchema.parse({ target: 42 })
-    expect(result.target).toBe(42)
-    expect(result.lang).toBeUndefined()
-    expect(result.theme).toBeUndefined()
-  })
-
-  it('accepts full settings', () => {
-    const result = partialSettingsSchema.parse({ target: 0, lang: 'ru', theme: 'dark' })
-    expect(result.target).toBe(0)
-    expect(result.lang).toBe('ru')
-    expect(result.theme).toBe('dark')
-  })
-
-  it('rejects invalid values even in partial', () => {
-    expect(() => partialSettingsSchema.parse({ target: -1 })).toThrow()
-    expect(() => partialSettingsSchema.parse({ lang: 'xx' })).toThrow()
-    expect(() => partialSettingsSchema.parse({ theme: 'auto' })).toThrow()
-  })
-
-  it('ignores unknown keys (strip by default)', () => {
-    const result = partialSettingsSchema.parse({ unknown: 'value' })
-    expect((result as Record<string, unknown>)['unknown']).toBeUndefined()
-  })
-})

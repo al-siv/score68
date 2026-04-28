@@ -1,11 +1,10 @@
 /**
  * Core TypeScript types for score68.
- *
- * @since 2.0.0
  */
 
-/** Numerology target: integer in [0, 99]. */
-export type Target = number
+import type { Target } from '../contracts/schemas.ts'
+
+export type { Target }
 
 /** A date range with inclusive boundaries (UTC). */
 export interface DateRange {

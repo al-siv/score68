@@ -22,14 +22,22 @@ const {
 const theme = ref<'light' | 'dark'>('light')
 
 function loadTheme(): 'light' | 'dark' {
-  const stored = localStorage.getItem('score68-theme')
-  if (stored === 'dark' || stored === 'light') return stored
+  try {
+    const stored = localStorage.getItem('score68-theme')
+    if (stored === 'dark' || stored === 'light') return stored
+  } catch (err) {
+    console.error('[storage] Failed to load theme:', err)
+  }
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
 function applyTheme(t: 'light' | 'dark'): void {
   document.documentElement.setAttribute('data-theme', t)
-  localStorage.setItem('score68-theme', t)
+  try {
+    localStorage.setItem('score68-theme', t)
+  } catch (err) {
+    console.error('[storage] Failed to save theme:', err)
+  }
   theme.value = t
 }
 
@@ -40,7 +48,11 @@ function toggleTheme(): void {
 function toggleLang(): void {
   const next = locale.value === 'en' ? 'ru' : 'en'
   locale.value = next
-  localStorage.setItem('score68-lang', next)
+  try {
+    localStorage.setItem('score68-lang', next)
+  } catch (err) {
+    console.error('[storage] Failed to save language:', err)
+  }
 }
 
 const isMobile = ref(false)

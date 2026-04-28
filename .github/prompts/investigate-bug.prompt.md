@@ -5,15 +5,18 @@ mode: 'agent'
 
 # Investigate Bug
 
-You are diagnosing a bug in the score68 CLI utility.
+You are diagnosing a bug in the score68 Electron desktop app.
 
 ## Steps
 
 1. Reproduce: run `npm run verify` and the specific failing scenario.
 2. Read the relevant source and test files to understand expected behavior.
+   - Pure logic: `src/shared/core/dates68.ts`, `src/shared/core/types.ts`
+   - UI layer: `src/renderer/src/composables/useDateSearch.ts`, `src/renderer/src/components/`
+   - Contracts: `src/shared/contracts/schemas.ts`
 3. Identify root cause — read code before speculating.
 4. Fix in the smallest possible scope.
-5. Add a regression test for the exact scenario.
+5. Add a regression test for the exact scenario (unit or property test in `tests/`).
 6. Run `npm run verify` to confirm all tests pass.
 7. Summarize: root cause, fix, and test added.
 

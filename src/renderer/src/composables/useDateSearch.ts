@@ -13,17 +13,25 @@ import type { YearGroup, DateRange } from '../../../shared/core'
 const TARGET_KEY = 'score68-target'
 
 function loadTarget(): number {
-  const stored = localStorage.getItem(TARGET_KEY)
-  if (stored !== null) {
-    const parsed = Number(stored)
-    const result = targetSchema.safeParse(parsed)
-    if (result.success) return result.data
+  try {
+    const stored = localStorage.getItem(TARGET_KEY)
+    if (stored !== null) {
+      const parsed = Number(stored)
+      const result = targetSchema.safeParse(parsed)
+      if (result.success) return result.data
+    }
+  } catch (err) {
+    console.error('[storage] Failed to load target:', err)
   }
   return numerologySumOfToday()
 }
 
 function saveTarget(value: number): void {
-  localStorage.setItem(TARGET_KEY, String(value))
+  try {
+    localStorage.setItem(TARGET_KEY, String(value))
+  } catch (err) {
+    console.error('[storage] Failed to save target:', err)
+  }
 }
 
 export function useDateSearch() {

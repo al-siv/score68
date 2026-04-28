@@ -2,8 +2,6 @@
  * Electron main process — window lifecycle management.
  *
  * Creates a single BrowserWindow with no menu bar, loading the Vite renderer.
- *
- * @since 2.0.0
  */
 
 import { app, BrowserWindow } from 'electron'
@@ -38,11 +36,23 @@ function createWindow(): void {
   }
 }
 
+process.on('uncaughtException', (err) => {
+  console.error('[main] Uncaught exception:', err)
+})
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[main] Unhandled rejection:', reason)
+})
+
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.score68.app')
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
+  })
+
+  app.on('render-process-gone', (_event, _webContents, details) => {
+    console.error('[main] Renderer process gone:', details.reason, details.exitCode)
   })
 
   createWindow()

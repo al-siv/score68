@@ -12,7 +12,6 @@ export const ru: MessageSchema = {
   info: {
     formula: '(Д + М + YY₁ + YY₂) % 100',
     today: 'Сегодня',
-    range: 'Диапазон',
     target: 'Цель',
   },
   dates: {

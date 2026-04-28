@@ -1,7 +1,5 @@
 /**
  * Barrel export for shared core.
- *
- * @since 2.0.0
  */
 
 export {

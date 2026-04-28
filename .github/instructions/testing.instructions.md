@@ -1,31 +1,29 @@
 ---
 description: 'Use when writing, modifying, or reviewing tests.'
-applyTo: 'test/**/*.test.js'
+applyTo: 'tests/**/*.test.ts'
 ---
 
 # Testing Conventions
 
 ## Framework
 
-- `node:test` built-in runner with `describe` / `it` blocks.
-- `node:assert/strict` for assertions (never loose `assert`).
+- **Vitest** 4 with `describe` / `it` blocks.
+- `expect` from Vitest for assertions (never loose asserts).
 - `fast-check` for property-based invariant tests.
 
 ## Running
 
-- `npm test` — runs `node --test test/*.test.js`.
-- `npm run verify` — lint + test in one pass.
+- `npm run test` — runs Vitest.
+- `npm run verify` — lint + typecheck + tests in one pass.
 
 ## Test layers (prefer the smallest sufficient)
 
-1. **Unit** (`dates68.test.js`, `args.test.js`) — pure function contracts.
-2. **Integration** (`cli.test.js`, `env.test.js`) — full CLI via `execFileSync`.
-3. **Property-based** (`property.test.js`) — formula invariants over wide input space.
+1. **Unit** (`tests/unit/dates68.test.ts`, `tests/unit/schemas.test.ts`) — pure function contracts.
+2. **Property** (`tests/property/numerology.test.ts`) — formula invariants over wide input space.
 
 ## Conventions
 
 - One `describe` per module or feature; one `it` per behavior.
-- Test names read as sentences: `'returns default config for empty args'`.
-- Integration tests use a helper `run(args, env)` that wraps `execFileSync`.
+- Test names read as sentences: `'returns dates matching the target'`.
 - Keep test setup in `describe`-level `const`s, not `beforeEach`.
-- No mocking — architecture is designed for DI and pure functions.
+- No mocking for pure functions — architecture is designed for direct unit testing.

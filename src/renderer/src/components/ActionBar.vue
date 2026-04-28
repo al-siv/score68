@@ -24,7 +24,8 @@ async function copyToClipboard(): Promise<void> {
     timer = setTimeout(() => {
       copied.value = false
     }, 1500)
-  } catch {
+  } catch (err) {
+    console.error('[clipboard] Failed to copy to clipboard:', err)
     copied.value = false
     copyError.value = true
     clearTimeout(timer)

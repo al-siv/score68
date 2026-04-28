@@ -1,28 +1,29 @@
 ---
-description: 'Use when writing or modifying JavaScript code in this project.'
-applyTo: 'src/**/*.js,cli.js'
+description: 'Use when writing or modifying TypeScript code in this project.'
+applyTo: 'src/**/*.ts,src/**/*.vue'
 ---
 
 # Code Style
 
 ## Language
 
+- TypeScript strict mode (`strict: true`, `noImplicitAny: true`).
 - ES modules (`import`/`export`), never CommonJS.
 - `const` by default; `let` only when reassignment is necessary; never `var`.
-- Use `import ... with { type: 'json' }` for JSON imports (Node ≥22).
 - Strict equality (`===`) everywhere — enforced by ESLint.
 
 ## Architecture
 
-- **Pure boundary**: `src/` modules export only pure functions. No `process`, `console`, or `fs`.
-- **Impure shell**: `cli.js` is the sole boundary — reads `process.argv`, `process.env`, writes to `console`.
-- **Discriminated unions** for results: `{ ok: true, config }` or `{ ok: false, error: { code, message } }`.
-- **Dependency injection** for testability: `resolveEnv(env, config)` takes an env object, not `process.env`.
+- **Pure boundary**: `src/shared/core/` modules export only pure functions. No Electron APIs, no DOM, no `console`, no `fs`.
+- **Renderer process**: `src/renderer/src/` contains Vue 3 SFCs (`<script setup lang="ts">`), composables, and i18n.
+- **Main process**: `src/main/index.ts` manages window lifecycle only.
+- **Contracts**: Zod schemas in `src/shared/contracts/schemas.ts` validate all external boundaries (user input, localStorage, IPC). Derive TypeScript types via `z.infer`.
+- **Dependency injection** for testability: pure functions accept parameters rather than reading global state.
 
 ## Functions
 
 - Prefer small, focused, single-responsibility functions.
-- Use JSDoc on all exports: `@param`, `@returns`.
+- Use TSDoc on all exports: `@param`, `@returns`, `@example`.
 - Generator functions (`function*`) for lazy sequences.
 - Named exports only; no default exports.
 

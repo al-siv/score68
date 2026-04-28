@@ -5,23 +5,26 @@ mode: 'agent'
 
 # Add Feature
 
-You are adding a feature to the score68 CLI utility.
+You are adding a feature to the score68 Electron desktop app.
 
 ## Context
 
-- Read `src/dates68.js`, `src/args.js`, `src/env.js`, and `cli.js` to understand current architecture.
-- All `src/` code must remain pure (no side-effects).
-- `cli.js` is the only impure boundary.
+- Read `src/shared/core/dates68.ts`, `src/shared/core/types.ts`, and `src/shared/contracts/schemas.ts` to understand pure core logic.
+- Read `src/renderer/src/composables/useDateSearch.ts` to understand Vue reactivity layer.
+- Read `src/renderer/src/components/` for UI patterns (Vue 3 SFC, `<script setup lang="ts">`, Composition API).
+- `src/shared/core/` must remain pure: no Electron APIs, no DOM, no side-effects, no `console`.
+- `src/main/index.ts` is the only Electron main-process boundary.
 
 ## Steps
 
-1. Identify which module(s) need changes.
-2. Implement the feature in the appropriate `src/` module.
-3. Wire it into `cli.js` if it affects CLI behavior.
-4. Add tests at the smallest sufficient layer (unit > integration).
-5. Update `--help` text in `cli.js` if adding flags/args.
-6. Run `npm run verify` to confirm lint + tests pass.
-7. Summarize changes made.
+1. Identify which module(s) need changes (`src/shared/core/`, `src/renderer/src/components/`, `src/renderer/src/composables/`, or `src/main/`).
+2. Implement the feature in the appropriate layer (core logic first, then UI, then main process if needed).
+3. If adding UI: create or update a Vue SFC component; wire it through `App.vue` if necessary.
+4. Add or update tests at the smallest sufficient layer:
+   - Unit tests in `tests/unit/` for pure core logic.
+   - Property tests in `tests/property/` for invariants.
+5. Run `npm run verify` to confirm lint + typecheck + tests pass.
+6. Summarize changes made.
 
 ## Feature request
 

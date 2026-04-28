@@ -1,7 +1,5 @@
 /**
  * i18n setup — vue-i18n with Russian and English.
- *
- * @since 2.0.0
  */
 
 import { createI18n } from 'vue-i18n'
@@ -11,9 +9,14 @@ import { ru } from './ru'
 const STORAGE_KEY = 'score68-lang'
 
 function detectLocale(): 'en' | 'ru' {
-  if (typeof localStorage === 'undefined') return 'en'
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored === 'ru' || stored === 'en') return stored
+  try {
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored === 'ru' || stored === 'en') return stored
+    }
+  } catch (err) {
+    console.error('[storage] Failed to load locale:', err)
+  }
   const nav = navigator.language.toLowerCase()
   return nav.startsWith('ru') ? 'ru' : 'en'
 }
